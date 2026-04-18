@@ -65,5 +65,6 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	getAllTodos := s.todoService.TodosList()
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(&getAllTodos)
 }
