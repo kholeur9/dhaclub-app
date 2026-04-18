@@ -33,10 +33,10 @@ func (t *MemoryTodo) GetByID(id string) (*Todo, error) {
 	return todoResult, nil
 }
 
-func (t *MemoryTodo) TodosList() []*Todo {
-	var todosResult []*Todo
+func (t *MemoryTodo) TodosList() []Todo {
+	var todosResult []Todo
 	for _, todo := range t.todos {
-		todosResult = append(todosResult, &todo)
+		todosResult = append(todosResult, todo)
 	}
 	return todosResult
 }
