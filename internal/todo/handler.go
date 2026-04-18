@@ -30,7 +30,7 @@ func (s *HandlerTodo) CreateTodoHandler(w http.ResponseWriter, r *http.Request) 
 	// read and matched elements to body in struct
 	structData := CreateTodoDto{}
 	if readJSON := json.NewDecoder(clientData).Decode(&structData); readJSON != nil {
-		http.Error(w, "JSON failed", http.StatusExpectationFailed)
+		http.Error(w, "JSON failed", http.StatusBadRequest)
 	}
 	// Send data at service
 	todo, err := s.todoService.CreateTodo(structData)
@@ -54,7 +54,7 @@ func (s *HandlerTodo) GetTodoByIDHandler(w http.ResponseWriter, r *http.Request)
 	}
 	todo, err := s.todoService.GetTodoByID(structData.ID)
 	if err !=  nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusNotFound)
 	}
 	json.NewEncoder(w).Encode(&todo)
 }

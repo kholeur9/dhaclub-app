@@ -23,12 +23,13 @@ func (t *MemoryTodo) Add(td Todo) error {
 	return nil
 }
 
-func (t *MemoryTodo) GetByID(id string) (*Todo, error) {
-	var todoResult *Todo
+func (t *MemoryTodo) GetByID(id string) (Todo, error) {
+	var todoResult Todo
 	for _, todo := range t.todos {
-		if todo.ID == id {
-			todoResult = &todo
+		if todo.ID != id {
+			return Todo{}, errors.New("to not found")
 		}
+		todoResult = todo
 	}
 	return todoResult, nil
 }
