@@ -48,15 +48,13 @@ func (s *HandlerTodo) GetTodoByIDHandler(w http.ResponseWriter, r *http.Request)
 		http.Error(w, HttpNoValid.Error(), http.StatusMethodNotAllowed)
 		return
 	}
-	structData := GetTodoByIdDto{}
-	if readJson := json.NewDecoder(r.Body).Decode(&structData); readJson != nil {
-		http.Error(w, "JSON failed", http.StatusExpectationFailed)
+	urlTodo := r.PathValue("todo_id")
+	todo, err := s.todoService.GetTodoByID(urlTodo)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-	todo, err := s.todoService.GetTodoByID(structData.ID)
-	if err !=  nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
-	}
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(&todo)
 }
 

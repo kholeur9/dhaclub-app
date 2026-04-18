@@ -19,8 +19,8 @@ func main() {
 	TodoService := todo.NewTodoService(store)
 	HandlerTodo := todo.NewHandlerTodo(TodoService)
 
-	router.HandleFunc("POST /create-todo", HandlerTodo.CreateTodoHandler)
-	router.HandleFunc("GET /todo", HandlerTodo.GetTodoByIDHandler)
+	router.HandleFunc("POST /todo", HandlerTodo.CreateTodoHandler)
+	router.HandleFunc("GET /todo/{todo_id}", HandlerTodo.GetTodoByIDHandler)
 	router.HandleFunc("GET /todos", HandlerTodo.TodosListHandler)
 
 	//router.Handle("GET /", http.FileServer(http.Dir("static")))

@@ -33,7 +33,7 @@ func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) 
 	newTodo := Todo{
 		ID: createdID,
 		Description: t.Description,
-		Done: false,
+		IsDone: false,
 		CreatedAt: time.Now(),
 		UpdatedAt: nil,
 	}
@@ -46,15 +46,15 @@ func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) 
 		Data: TodoDto{
 			ID: newTodo.ID,
 			Description: newTodo.Description,
-			Done: newTodo.Done,
+			Done: newTodo.IsDone,
 		},
 	}, nil
 }
 
-func (ts *TodoService) GetTodoByID(id string) (*Todo, error) {
+func (ts *TodoService) GetTodoByID(id string) (Todo, error) {
 	thisID, err := ts.store.GetByID(id)
 	if err != nil {
-		return nil, err
+		return Todo{}, err
 	}
 	return thisID, nil
 }
