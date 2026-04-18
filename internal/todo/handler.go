@@ -43,7 +43,7 @@ func (s *HandlerTodo) CreateTodoHandler(w http.ResponseWriter, r *http.Request) 
 
 func (s *HandlerTodo) GetTodoByIDHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	if r.Method != "POST" {
+	if r.Method != "GET" {
 		http.Error(w, HttpNoValid.Error(), http.StatusMethodNotAllowed)
 		return
 	}
