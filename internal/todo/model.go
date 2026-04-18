@@ -21,5 +21,5 @@ type TodoStore interface {
 	Add(t Todo) error
 	ExistsByDescription(desc string) (bool, error)
 	TodosList() []Todo
-	GetByID(id string) (Todo, error)
+	GetByID(id string) (*Todo, error)
 }
