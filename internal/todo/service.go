@@ -52,6 +52,9 @@ func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) 
 }
 
 func (ts *TodoService) GetTodoByID(id string) (Todo, error) {
+	if id == "" {
+		return Todo{}, errors.New("un id est nécessaire pour trouver votre todo")
+	}
 	thisID, err := ts.store.GetByID(id)
 	if err != nil {
 		return Todo{}, err
