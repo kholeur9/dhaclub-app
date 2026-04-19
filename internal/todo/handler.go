@@ -4,7 +4,6 @@ import (
 	//"context"
 	"dhaclub-app/internal/todo/utils"
 	"encoding/json"
-	//"fmt"
 
 	//"strconv"
 	//"html"
@@ -32,17 +31,17 @@ func (s *HandlerTodo) CreateTodoHandler(w http.ResponseWriter, r *http.Request) 
 	todo, err := s.todoService.CreateTodo(structData)
 	var status int
 	if err != nil {
-		switch err {
-		case ErrTodoTooShort:
-			status = http.StatusBadRequest
-		case ErrDescriptionTodoEmpty:
-			status = http.StatusBadRequest
-		case ErrTodoExists:
-			status = http.StatusConflict
-		default:
-			status = 500
+		if v, ok := err.(*ServiceError); ok {
+			switch v.Type {
+			case "VALIDATION":
+				status = http.StatusBadRequest
+			case "CONFLICT":
+				status = http.StatusConflict
+			default:
+				status = 500
+			}
+			utils.WriteError(w, err.Error(), status)
 		}
-		utils.WriteError(w, err.Error(), status)
 		return
 	}
 	utils.WriteResponse(w, 201, todo)

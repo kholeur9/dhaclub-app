@@ -12,21 +12,32 @@ type TodoService struct {
 }
 
 func NewTodoService(store TodoStore) *TodoService {
-	return &TodoService{store}
+	return &TodoService{
+		store,
+	}
 }
 
 func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) {
 	// Verify if description is not registered
 	if t.Description == "" {
-		return nil, ErrDescriptionTodoEmpty
+		return nil, &ServiceError{
+			Type: "VALIDATION",
+			Message: ErrDescriptionTodoEmpty.Error(),
+		}
 	}
 	// Verify the length
 	if len(t.Description) < 2 {
-		return nil, ErrTodoTooShort
+		return nil, &ServiceError{
+			Type: "VALIDATION",
+			Message: ErrTodoTooShort.Error(),
+		}
 	}
 	todoExists, err := ts.store.ExistsByDescription(t.Description)
 	if todoExists {
-		return nil, err
+		return nil, &ServiceError{
+			Type: "CONFLICT",
+			Message: ErrTodoExists.Error(),
+		}
 	}
 	createdID := uuid.New().String()
 	newTodo := Todo{

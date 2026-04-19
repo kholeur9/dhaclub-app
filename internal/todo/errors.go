@@ -8,3 +8,12 @@ var (
 	ErrTodoTooShort = errors.New("description to short")
 	ErrDescriptionTodoEmpty = errors.New("must have an description")
 )
+
+type ServiceError struct {
+	Type string
+	Message string
+}
+
+func (se *ServiceError) Error() string {
+	return ""
+}
