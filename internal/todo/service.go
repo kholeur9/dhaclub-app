@@ -62,7 +62,7 @@ func (ts *TodoService) GetTodoByID(id string) (*Todo, error) {
 	return thisID, nil
 }
 
-func (ts *TodoService) TodosList() []Todo {
+func (ts *TodoService) TodosList() []*Todo {
 	getAllTodos := ts.store.TodosList() 
 	return getAllTodos
 }

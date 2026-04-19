@@ -6,12 +6,12 @@ import (
 )
 
 type MemoryTodo struct {
-	todos map[string]Todo
+	todos map[string]*Todo
 }
 
 func NewMemoryTodo() *MemoryTodo {
 	return &MemoryTodo{
-		todos: map[string]Todo{},
+		todos: map[string]*Todo{},
 	}
 }
 
@@ -19,19 +19,19 @@ func (t *MemoryTodo) Add(td Todo) error {
 	if _, exists := t.todos[td.ID]; exists {
 		return errors.New("Todo exists")
 	}
-	t.todos[td.ID] = td
+	t.todos[td.ID] = &td
 	return nil
 }
 
-func (t *MemoryTodo) GetByID(id string) (Todo, error) {
+func (t *MemoryTodo) GetByID(id string) (*Todo, error) {
 	if _, exists := t.todos[id]; exists {
 		return t.todos[id], nil
 	}
-	return Todo{}, errors.New("todo not found")
+	return nil, errors.New("todo not found")
 }
 
-func (t *MemoryTodo) TodosList() []Todo {
-	var todosResult []Todo
+func (t *MemoryTodo) TodosList() []*Todo {
+	var todosResult []*Todo
 	for _, todo := range t.todos {
 		todosResult = append(todosResult, todo)
 	}

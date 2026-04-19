@@ -20,7 +20,6 @@ func NewHandlerTodo(todoService *TodoService) *HandlerTodo {
 }
 
 func (s *HandlerTodo) CreateTodoHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	// taked json of body
 	clientData := r.Body
 	// read and matched elements to body in struct
@@ -39,7 +38,6 @@ func (s *HandlerTodo) CreateTodoHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 func (s *HandlerTodo) GetTodoByIDHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	urlTodo := r.PathValue("todo_id")
 	todo, err := s.todoService.GetTodoByID(urlTodo)
 	if err != nil {
@@ -50,7 +48,6 @@ func (s *HandlerTodo) GetTodoByIDHandler(w http.ResponseWriter, r *http.Request)
 }
 
 func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	getAllTodos := s.todoService.TodosList()
 	utils.WriteResponse(w, 200, getAllTodos)
 }

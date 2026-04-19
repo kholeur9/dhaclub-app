@@ -20,6 +20,6 @@ type Todo struct {
 type TodoStore interface {
 	Add(t Todo) error
 	ExistsByDescription(desc string) (bool, error)
-	TodosList() []Todo
+	TodosList() []*Todo
 	GetByID(id string) (*Todo, error)
 }
