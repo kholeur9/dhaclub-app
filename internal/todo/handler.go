@@ -30,18 +30,21 @@ func (s *HandlerTodo) CreateTodoHandler(w http.ResponseWriter, r *http.Request) 
 	// Send data at service
 	todo, err := s.todoService.CreateTodo(structData)
 	var status int
+	var messageError string
 	if err != nil {
 		if v, ok := err.(*ServiceError); ok {
 			switch v.Type {
 			case "VALIDATION":
 				status = http.StatusBadRequest
+				messageError = v.Message
 			case "CONFLICT":
 				status = http.StatusConflict
+				messageError = v.Message
 			default:
 				status = 500
 			}
-			utils.WriteError(w, err.Error(), status)
 		}
+		utils.WriteError(w, messageError, status)
 		return
 	}
 	utils.WriteResponse(w, 201, todo)
