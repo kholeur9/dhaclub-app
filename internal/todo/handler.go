@@ -39,6 +39,8 @@ func (s *HandlerTodo) CreateTodoHandler(w http.ResponseWriter, r *http.Request) 
 			status = http.StatusBadRequest
 		case ErrTodoExists:
 			status = http.StatusConflict
+		default:
+			status = 500
 		}
 		utils.WriteError(w, err.Error(), status)
 		return
