@@ -19,11 +19,11 @@ func NewTodoService(store TodoStore) *TodoService {
 func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) {
 	// Verify if description is not registered
 	if t.Description == "" {
-		return nil, errors.New("todo would have an description")
+		return nil, errors.New("must have an description")
 	}
 	// Verify the length
 	if len(t.Description) < 2 {
-		return nil, errors.New("todo would have more two caracters")
+		return nil, errors.New("description to short")
 	}
 	todoExists, err := ts.store.ExistsByDescription(t.Description)
 	if todoExists {
@@ -52,9 +52,6 @@ func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) 
 }
 
 func (ts *TodoService) GetTodoByID(id string) (*Todo, error) {
-	if id == "" {
-		return nil, errors.New("un id est nécessaire pour trouver votre todo")
-	}
 	thisID, err := ts.store.GetByID(id)
 	if err != nil {
 		return nil, err
