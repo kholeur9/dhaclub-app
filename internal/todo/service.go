@@ -51,13 +51,13 @@ func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) 
 	}, nil
 }
 
-func (ts *TodoService) GetTodoByID(id string) (Todo, error) {
+func (ts *TodoService) GetTodoByID(id string) (*Todo, error) {
 	if id == "" {
-		return Todo{}, errors.New("un id est nécessaire pour trouver votre todo")
+		return nil, errors.New("un id est nécessaire pour trouver votre todo")
 	}
 	thisID, err := ts.store.GetByID(id)
 	if err != nil {
-		return Todo{}, err
+		return nil, err
 	}
 	return thisID, nil
 }
