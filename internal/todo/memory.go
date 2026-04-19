@@ -1,7 +1,6 @@
 package todo
 
 import (
-	"errors"
 	//"fmt"
 )
 
@@ -17,7 +16,7 @@ func NewMemoryTodo() *MemoryTodo {
 
 func (t *MemoryTodo) Add(td Todo) error {
 	if _, exists := t.todos[td.ID]; exists {
-		return errors.New("Todo exists")
+		return ErrTodoExists
 	}
 	t.todos[td.ID] = &td
 	return nil
@@ -27,7 +26,7 @@ func (t *MemoryTodo) GetByID(id string) (*Todo, error) {
 	if _, exists := t.todos[id]; exists {
 		return t.todos[id], nil
 	}
-	return nil, errors.New("todo not found")
+	return nil, ErrTodoNotFound
 }
 
 func (t *MemoryTodo) TodosList() []*Todo {
@@ -41,7 +40,7 @@ func (t *MemoryTodo) TodosList() []*Todo {
 func (t *MemoryTodo) ExistsByDescription(desc string) (bool, error) {
 	for _, todo := range t.todos {
 		if todo.Description == desc {
-			return true, errors.New("todo already exists")
+			return true, ErrTodoExists
 		}
 	}
 	return false, nil

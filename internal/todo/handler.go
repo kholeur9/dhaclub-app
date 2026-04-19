@@ -30,8 +30,17 @@ func (s *HandlerTodo) CreateTodoHandler(w http.ResponseWriter, r *http.Request) 
 	}
 	// Send data at service
 	todo, err := s.todoService.CreateTodo(structData)
+	var status int
 	if err != nil {
-		utils.WriteError(w, err.Error())
+		switch err {
+		case ErrTodoTooShort:
+			status = http.StatusBadRequest
+		case ErrDescriptionTodoEmpty:
+			status = http.StatusBadRequest
+		case ErrTodoExists:
+			status = http.StatusConflict
+		}
+		utils.WriteError(w, err.Error(), status)
 		return
 	}
 	utils.WriteResponse(w, 201, todo)
@@ -41,6 +50,7 @@ func (s *HandlerTodo) GetTodoByIDHandler(w http.ResponseWriter, r *http.Request)
 	urlTodo := r.PathValue("todo_id")
 	if urlTodo == "" {
 		http.Error(w, "demande invalide", http.StatusBadRequest)
+		return
 	}
 	todo, err := s.todoService.GetTodoByID(urlTodo)
 	if err != nil {

@@ -1,7 +1,6 @@
 package todo
 
 import (
-	"errors"
 	//"fmt"
 	"time"
 
@@ -19,11 +18,11 @@ func NewTodoService(store TodoStore) *TodoService {
 func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) {
 	// Verify if description is not registered
 	if t.Description == "" {
-		return nil, errors.New("must have an description")
+		return nil, ErrDescriptionTodoEmpty
 	}
 	// Verify the length
 	if len(t.Description) < 2 {
-		return nil, errors.New("description to short")
+		return nil, ErrTodoTooShort
 	}
 	todoExists, err := ts.store.ExistsByDescription(t.Description)
 	if todoExists {

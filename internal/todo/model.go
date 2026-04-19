@@ -1,12 +1,7 @@
 package todo
 
 import (
-	"errors"
 	"time"
-)
-
-var (
-	HttpNoValid = errors.New("this method is not allowed")
 )
 
 type Todo struct {

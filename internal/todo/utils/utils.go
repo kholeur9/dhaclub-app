@@ -9,10 +9,11 @@ type ErrorMessage struct {
 	Error string `json:"error"`
 }
 
-func WriteError(w http.ResponseWriter, message string) {
+func WriteError(w http.ResponseWriter, message string, status int) {
 	errorMessage := ErrorMessage{
 		Error: message,
 	}
+	w.WriteHeader(status)
 	json.NewEncoder(w).Encode(errorMessage)
 }
 
