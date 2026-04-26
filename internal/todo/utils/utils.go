@@ -13,6 +13,7 @@ func WriteError(w http.ResponseWriter, message string, status int) {
 	errorMessage := ErrorMessage{
 		Error: message,
 	}
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	json.NewEncoder(w).Encode(errorMessage)
 }

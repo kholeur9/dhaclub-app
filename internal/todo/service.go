@@ -3,6 +3,7 @@ package todo
 import (
 	//"fmt"
 	"time"
+	"errors"
 
 	"github.com/google/uuid"
 )
@@ -72,10 +73,10 @@ func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) 
 
 func (ts *TodoService) GetTodoByID(id string) (*Todo, error) {
 	thisID, err := ts.store.GetByID(id)
-	if err != nil {
+	if errors.Is(err, ErrTodoNotFound) {
 		return nil, &ServiceError{
 			Type: NOT_FOUND,
-			Message: ErrTodoNotFound.Error(),
+			Message: "Todo not found",
 		}
 	}
 	return thisID, nil
