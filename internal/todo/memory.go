@@ -40,7 +40,7 @@ func (t *MemoryTodo) TodosList() []*Todo {
 func (t *MemoryTodo) ExistsByDescription(desc string) (bool, error) {
 	for _, todo := range t.todos {
 		if todo.Description == desc {
-			return true, ErrTodoExists
+			return true, nil
 		}
 	}
 	return false, nil

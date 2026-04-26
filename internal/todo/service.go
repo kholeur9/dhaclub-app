@@ -21,22 +21,28 @@ func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) 
 	// Verify if description is not registered
 	if t.Description == "" {
 		return nil, &ServiceError{
-			Type: "VALIDATION",
-			Message: ErrDescriptionTodoEmpty.Error(),
+			Type: VALIDATION,
+			Message: "Must have an description",
 		}
 	}
 	// Verify the length
 	if len(t.Description) < 2 {
 		return nil, &ServiceError{
-			Type: "VALIDATION",
-			Message: ErrTodoTooShort.Error(),
+			Type: VALIDATION,
+			Message: "Description too short",
 		}
 	}
 	todoExists, err := ts.store.ExistsByDescription(t.Description)
+	if err != nil {
+		return nil, &ServiceError{
+			Type: INTERNAL,
+			Message: "Internal server error",
+		}
+	}
 	if todoExists {
 		return nil, &ServiceError{
-			Type: "CONFLICT",
-			Message: ErrTodoExists.Error(),
+			Type: CONFLICT,
+			Message: "Todo already exists",
 		}
 	}
 	createdID := uuid.New().String()
@@ -49,7 +55,10 @@ func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) 
 	}
 	err = ts.store.Add(newTodo)
 	if err != nil {
-		return nil, err
+		return nil, &ServiceError{
+			Type: INTERNAL,
+			Message: "Internal server error",
+		}
 	}
 	return &CreateTodoResponse{
 		Message: "Création réussie",
@@ -64,7 +73,10 @@ func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) 
 func (ts *TodoService) GetTodoByID(id string) (*Todo, error) {
 	thisID, err := ts.store.GetByID(id)
 	if err != nil {
-		return nil, err
+		return nil, &ServiceError{
+			Type: NOT_FOUND,
+			Message: ErrTodoNotFound.Error(),
+		}
 	}
 	return thisID, nil
 }

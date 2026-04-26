@@ -39,7 +39,7 @@ func (s *HandlerTodo) CreateTodoHandler(w http.ResponseWriter, r *http.Request) 
 				utils.WriteError(w, v.Message, http.StatusConflict)
 				return
 			default:
-				utils.WriteError(w, "une erreur est survenue", http.StatusInternalServerError)
+				utils.WriteError(w, v.Message, http.StatusInternalServerError)
 				return
 			}
 		} else {
@@ -52,14 +52,15 @@ func (s *HandlerTodo) CreateTodoHandler(w http.ResponseWriter, r *http.Request) 
 
 func (s *HandlerTodo) GetTodoByIDHandler(w http.ResponseWriter, r *http.Request) {
 	urlTodo := r.PathValue("todo_id")
-	if urlTodo == "" {
-		http.Error(w, "demande invalide", http.StatusBadRequest)
-		return
-	}
 	todo, err := s.todoService.GetTodoByID(urlTodo)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
-		return
+		if val, ok := err.(*ServiceError); ok {
+			switch val.Type {
+			case "NOT_FOUND":
+				utils.WriteError(w, val.Message, http.StatusNotFound)
+				return
+			}
+		}
 	}
 	utils.WriteResponse(w, 200, todo)
 }
