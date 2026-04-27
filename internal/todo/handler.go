@@ -29,7 +29,7 @@ func (s *HandlerTodo) CreateTodoHandler(w http.ResponseWriter, r *http.Request) 
 	// Send data at service
 	todo, err := s.todoService.CreateTodo(structData)
 	if err != nil {
-		HandleServiceError(w, err)
+		HandleServiceError(err)
 	}
 	WriteResponse(w, 201, todo)
 }
@@ -38,7 +38,7 @@ func (s *HandlerTodo) GetTodoByIDHandler(w http.ResponseWriter, r *http.Request)
 	urlTodo := r.PathValue("todo_id")
 	todo, err := s.todoService.GetTodoByID(urlTodo)
 	if err != nil {
-		HandleServiceError(w, err)
+		HandleServiceError(err)
 	}
 	WriteResponse(w, 200, todo)
 }
