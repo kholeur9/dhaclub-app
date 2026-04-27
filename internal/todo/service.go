@@ -78,6 +78,11 @@ func (ts *TodoService) GetTodoByID(id string) (*Todo, error) {
 			Type: NOT_FOUND,
 			Message: "Todo not found",
 		}
+	} else if err != nil {
+		return nil, &ServiceError{
+			Type: INTERNAL,
+			Message: "Internal error server",
+		}
 	}
 	return thisID, nil
 }

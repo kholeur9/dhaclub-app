@@ -25,8 +25,7 @@ func WriteResponse(w http.ResponseWriter, status int, v any) {
 	json.NewEncoder(w).Encode(v)
 }
 
-func HandleServiceError(err error) {
-	var w http.ResponseWriter
+func HandleServiceError(w http.ResponseWriter, err error) {
 	var se *ServiceError
 	if errors.As(err, &se) {
 		switch se.Type {
