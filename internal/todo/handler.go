@@ -2,7 +2,6 @@ package todo
 
 import (
 	//"context"
-	"dhaclub-app/internal/todo/utils"
 	"encoding/json"
 
 	//"strconv"
@@ -30,42 +29,21 @@ func (s *HandlerTodo) CreateTodoHandler(w http.ResponseWriter, r *http.Request) 
 	// Send data at service
 	todo, err := s.todoService.CreateTodo(structData)
 	if err != nil {
-		if v, ok := err.(*ServiceError); ok {
-			switch v.Type {
-			case "VALIDATION":
-				utils.WriteError(w, v.Message, http.StatusBadRequest)
-				return
-			case "CONFLICT":
-				utils.WriteError(w, v.Message, http.StatusConflict)
-				return
-			default:
-				utils.WriteError(w, v.Message, http.StatusInternalServerError)
-				return
-			}
-		} else {
-			utils.WriteError(w, "une erreur est survenue", http.StatusInternalServerError)
-			return
-		}
+		HandleServiceError(w, err)
 	}
-	utils.WriteResponse(w, 201, todo)
+	WriteResponse(w, 201, todo)
 }
 
 func (s *HandlerTodo) GetTodoByIDHandler(w http.ResponseWriter, r *http.Request) {
 	urlTodo := r.PathValue("todo_id")
 	todo, err := s.todoService.GetTodoByID(urlTodo)
 	if err != nil {
-		if val, ok := err.(*ServiceError); ok {
-			switch val.Type {
-			case "NOT_FOUND":
-				utils.WriteError(w, val.Message, http.StatusNotFound)
-				return
-			}
-		}
+		HandleServiceError(w, err)
 	}
-	utils.WriteResponse(w, 200, todo)
+	WriteResponse(w, 200, todo)
 }
 
 func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 	getAllTodos := s.todoService.TodosList()
-	utils.WriteResponse(w, 200, getAllTodos)
+	WriteResponse(w, 200, getAllTodos)
 }
