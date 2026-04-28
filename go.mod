@@ -1,4 +1,4 @@
-module dhaclub-app
+module github.com/kholeur9/dhaclub-app
 
 go 1.24.4
 

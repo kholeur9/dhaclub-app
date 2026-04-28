@@ -2,10 +2,11 @@ package todo
 
 import (
 	//"fmt"
-	"time"
 	"errors"
+	"time"
 
 	"github.com/google/uuid"
+	"github.com/kholeur9/dhaclub-app/internal/apperrors"
 )
 
 type TodoService struct {
@@ -21,28 +22,28 @@ func NewTodoService(store TodoStore) *TodoService {
 func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) {
 	// Verify if description is not registered
 	if t.Description == "" {
-		return nil, &ServiceError{
-			Type: VALIDATION,
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.VALIDATION,
 			Message: "Must have an description",
 		}
 	}
 	// Verify the length
 	if len(t.Description) < 2 {
-		return nil, &ServiceError{
-			Type: VALIDATION,
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.VALIDATION,
 			Message: "Description too short",
 		}
 	}
 	todoExists, err := ts.store.ExistsByDescription(t.Description)
 	if err != nil {
-		return nil, &ServiceError{
-			Type: INTERNAL,
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.INTERNAL,
 			Message: "Internal server error",
 		}
 	}
 	if todoExists {
-		return nil, &ServiceError{
-			Type: CONFLICT,
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.CONFLICT,
 			Message: "Todo already exists",
 		}
 	}
@@ -56,8 +57,8 @@ func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) 
 	}
 	err = ts.store.Add(newTodo)
 	if err != nil {
-		return nil, &ServiceError{
-			Type: INTERNAL,
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.INTERNAL,
 			Message: "Internal server error",
 		}
 	}
@@ -73,15 +74,15 @@ func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) 
 
 func (ts *TodoService) GetTodoByID(id string) (*Todo, error) {
 	thisID, err := ts.store.GetByID(id)
-	if errors.Is(err, ErrTodoNotFound) {
-		return nil, &ServiceError{
-			Type: NOT_FOUND,
+	if errors.Is(err, apperrors.ErrTodoNotFound) {
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.NOT_FOUND,
 			Message: "Todo not found",
 		}
 	} else if err != nil {
-		return nil, &ServiceError{
-			Type: INTERNAL,
-			Message: "Internal error server",
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.INTERNAL,
+			Message: "Internal server error",
 		}
 	}
 	return thisID, nil

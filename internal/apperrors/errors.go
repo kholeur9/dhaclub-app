@@ -1,4 +1,4 @@
-package todo
+package apperrors
 
 import "errors"
 

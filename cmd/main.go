@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 
-	"dhaclub-app/internal/todo"
+	"github.com/kholeur9/dhaclub-app/internal/todo"
 )
 
 func main() {

@@ -1,8 +1,8 @@
 package todo
 
-import (
-	//"fmt"
-)
+import "github.com/kholeur9/dhaclub-app/internal/apperrors"
+
+//"fmt"
 
 type MemoryTodo struct {
 	todos map[string]*Todo
@@ -16,7 +16,7 @@ func NewMemoryTodo() *MemoryTodo {
 
 func (t *MemoryTodo) Add(td Todo) error {
 	if _, exists := t.todos[td.ID]; exists {
-		return ErrTodoExists
+		return apperrors.ErrTodoExists
 	}
 	t.todos[td.ID] = &td
 	return nil
@@ -26,7 +26,7 @@ func (t *MemoryTodo) GetByID(id string) (*Todo, error) {
 	if _, exists := t.todos[id]; exists {
 		return t.todos[id], nil
 	}
-	return nil, ErrTodoNotFound
+	return nil, apperrors.ErrTodoNotFound
 }
 
 func (t *MemoryTodo) TodosList() []*Todo {

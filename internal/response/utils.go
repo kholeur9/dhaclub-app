@@ -1,9 +1,11 @@
-package todo
+package response
 
 import (
 	"encoding/json"
-	"net/http"
 	"errors"
+	"net/http"
+
+	"github.com/kholeur9/dhaclub-app/internal/apperrors"
 )
 
 type ErrorMessage struct {
@@ -26,13 +28,16 @@ func WriteResponse(w http.ResponseWriter, status int, v any) {
 }
 
 func HandleServiceError(w http.ResponseWriter, err error) {
-	var se *ServiceError
+	var se *apperrors.ServiceError
 	if errors.As(err, &se) {
 		switch se.Type {
-		case VALIDATION:
+		case apperrors.VALIDATION:
 			WriteError(w, se.Message, http.StatusBadRequest)
 			return
-		case CONFLICT:
+		case apperrors.CONFLICT:
+			WriteError(w, se.Message, http.StatusConflict)
+			return
+		case apperrors.NOT_FOUND:
 			WriteError(w, se.Message, http.StatusConflict)
 			return
 		default:
@@ -40,7 +45,7 @@ func HandleServiceError(w http.ResponseWriter, err error) {
 			return
 		}
 	} else {
-		WriteError(w, "une erreur est survenue", http.StatusInternalServerError)
+		WriteError(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 }
