@@ -16,12 +16,13 @@ func NewPostgresTodo(db *sql.DB) *PostgresTodo {
 	}
 }
 
-func (pt *PostgresTodo) Add(t Todo) error {
-	_, err := pt.db.Exec(`INSERT INTO todos(id, description) VALUES($1, $2)`, t.ID, t.Description)
-	if err != nil {
-		return err
+func (pt *PostgresTodo) Add(t Todo) (*Todo, error) {
+	var todoCreated *Todo
+	row := pt.db.QueryRow(`INSERT INTO todos(id, description) VALUES($1, $2)`, t.ID, t.Description)
+	if err := row.Scan(&todoCreated.ID, &todoCreated.Description, &todoCreated.IsDone); err != nil {
+		return nil, err
 	}
-	return nil
+	return todoCreated, nil
 }
 
 func (pt *PostgresTodo) ExistsByDescription(description string) (bool, error) {
@@ -34,27 +35,27 @@ func (pt *PostgresTodo) ExistsByDescription(description string) (bool, error) {
 	if err == sql.ErrNoRows {
 		return false, nil
 	}
-	return false, nil
+	return false, err
 }
 
-func (pt *PostgresTodo) TodosList() []*Todo {
-	rows, err := pt.db.Query(`SELECT * FROM todos ORDER BY created_at DESC`)
+func (pt *PostgresTodo) TodosList() ([]*Todo, error) {
+	rows, err := pt.db.Query(`SELECT id, description, is_done, created_at, updated_at FROM todos ORDER BY created_at DESC`)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 	defer rows.Close()
 	var todos []*Todo
 	for rows.Next() {
 		var todo Todo
 		if err := rows.Scan(&todo.ID, &todo.Description, &todo.IsDone, &todo.CreatedAt, &todo.UpdatedAt); err != nil {
-			return nil
+			return nil, err
 		}
 		todos = append(todos, &todo)
 	}
 	if err := rows.Err(); err != nil {
-		return nil
+		return nil, err
 	}
-	return todos
+	return todos, nil
 }
 
 func (pt *PostgresTodo) GetByID(id string) (*Todo, error) {
@@ -62,11 +63,11 @@ func (pt *PostgresTodo) GetByID(id string) (*Todo, error) {
 	row := pt.db.QueryRow(`
 	SELECT id, description, is_done, created_at, updated_at FROM todos WHERE id = $1`, id)
 	err := row.Scan(&todo.ID, &todo.Description, &todo.IsDone, &todo.CreatedAt, &todo.UpdatedAt)
-	if err == sql.ErrNoRows {
-		return nil, apperrors.ErrTodoNotFound
-	} else if err != nil{
+	if err != nil{
+		if err == sql.ErrNoRows {
+			return nil, apperrors.ErrTodoNotFound
+		}
 		return nil, err
-	} else {
-		return &todo, nil
 	}
+	return &todo, nil
 }

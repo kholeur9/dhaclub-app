@@ -52,7 +52,7 @@ func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) 
 		ID:          createdID,
 		Description: t.Description,
 	}
-	err = ts.store.Add(newTodo)
+	todo, err := ts.store.Add(newTodo)
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,
@@ -62,9 +62,9 @@ func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) 
 	return &CreateTodoResponse{
 		Message: "Création réussie",
 		Data: TodoDto{
-			ID:          newTodo.ID,
-			Description: newTodo.Description,
-			Done:        newTodo.IsDone,
+			ID:          todo.ID,
+			Description: todo.Description,
+			Done:        todo.IsDone,
 		},
 	}, nil
 }
@@ -85,7 +85,10 @@ func (ts *TodoService) GetTodoByID(id string) (*Todo, error) {
 	return thisID, nil
 }
 
-func (ts *TodoService) TodosList() []*Todo {
-	getAllTodos := ts.store.TodosList()
-	return getAllTodos
+func (ts *TodoService) TodosList() ([]*Todo, error) {
+	getAllTodos, err := ts.store.TodosList()
+	if err != nil {
+		
+	}
+	return getAllTodos, nil
 }
