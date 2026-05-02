@@ -18,7 +18,7 @@ func NewPostgresTodo(db *sql.DB) *PostgresTodo {
 
 func (pt *PostgresTodo) Add(t Todo) (*Todo, error) {
 	var todoCreated Todo
-	row := pt.db.QueryRow(`INSERT INTO todos(id, description) VALUES($1, $2) RETURNING id, description, is_done`, t.ID, t.Description)
+	row := pt.db.QueryRow(`INSERT INTO todos(id, description) VALUES($1, $2) RETURNING id, description, is_done, created_at, updated_at`, t.ID, t.Description)
 	if err := row.Scan(&todoCreated.ID, &todoCreated.Description, &todoCreated.IsDone); err != nil {
 		return nil, err
 	}
@@ -26,9 +26,9 @@ func (pt *PostgresTodo) Add(t Todo) (*Todo, error) {
 }
 
 func (pt *PostgresTodo) ExistsByDescription(description string) (bool, error) {
-	var desc string
-	todo := pt.db.QueryRow(`SELECT 1 FROM todos WHERE description = $1`, description)
-	err := todo.Scan(&desc)
+	var exists int
+	row := pt.db.QueryRow(`SELECT 1 FROM todos WHERE description = $1`, description)
+	err := row.Scan(&exists)
 	if err == nil {
 		return true, nil
 	}
