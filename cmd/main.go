@@ -7,13 +7,14 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/joho/godotenv"
 	"github.com/kholeur9/dhaclub-app/internal/db"
 	"github.com/kholeur9/dhaclub-app/internal/todo"
 )
 
 func main() {
+	godotenv.Load()
 	port := ":8080"
-
 	pg := db.Connect()
 
 	router := http.NewServeMux()
