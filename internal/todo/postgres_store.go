@@ -46,11 +46,11 @@ func (pt *PostgresTodo) TodosList() ([]*Todo, error) {
 	defer rows.Close()
 	var todos []*Todo
 	for rows.Next() {
-		var todo Todo
+		todo := new(Todo)
 		if err := rows.Scan(&todo.ID, &todo.Description, &todo.IsDone, &todo.CreatedAt, &todo.UpdatedAt); err != nil {
 			return nil, err
 		}
-		todos = append(todos, &todo)
+		todos = append(todos, todo)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
