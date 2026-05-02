@@ -7,15 +7,18 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/kholeur9/dhaclub-app/internal/db"
 	"github.com/kholeur9/dhaclub-app/internal/todo"
 )
 
 func main() {
 	port := ":8080"
 
+	pg := db.Connect()
+
 	router := http.NewServeMux()
 
-	store := todo.NewMemoryTodo()
+	store := todo.NewPostgresTodo(pg)
 	TodoService := todo.NewTodoService(store)
 	HandlerTodo := todo.NewHandlerTodo(TodoService)
 

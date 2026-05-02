@@ -7,9 +7,9 @@ import (
 type Todo struct {
 	ID          string     `json:"id"`
 	Description string     `json:"description"`
-	IsDone      bool       `json:"done"`
-	CreatedAt   time.Time  `json:"createdat"`
-	UpdatedAt   *time.Time `json:"updatedat"`
+	IsDone      bool       `json:"is_done"`
+	CreatedAt   time.Time  `json:"created_at"`
+	UpdatedAt   *time.Time `json:"updated_at"`
 }
 
 type TodoStore interface {

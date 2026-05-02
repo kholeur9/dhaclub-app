@@ -38,7 +38,7 @@ func HandleServiceError(w http.ResponseWriter, err error) {
 			WriteError(w, se.Message, http.StatusConflict)
 			return
 		case apperrors.NOT_FOUND:
-			WriteError(w, se.Message, http.StatusConflict)
+			WriteError(w, se.Message, http.StatusNotFound)
 			return
 		default:
 			WriteError(w, se.Message, http.StatusInternalServerError)
