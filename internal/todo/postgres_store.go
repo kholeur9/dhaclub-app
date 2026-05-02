@@ -19,7 +19,7 @@ func NewPostgresTodo(db *sql.DB) *PostgresTodo {
 func (pt *PostgresTodo) Add(t Todo) (*Todo, error) {
 	var todoCreated Todo
 	row := pt.db.QueryRow(`INSERT INTO todos(id, description) VALUES($1, $2) RETURNING id, description, is_done, created_at, updated_at`, t.ID, t.Description)
-	if err := row.Scan(&todoCreated.ID, &todoCreated.Description, &todoCreated.IsDone); err != nil {
+	if err := row.Scan(&todoCreated.ID, &todoCreated.Description, &todoCreated.IsDone, &todoCreated.CreatedAt, &todoCreated.UpdatedAt); err != nil {
 		return nil, err
 	}
 	return &todoCreated, nil
