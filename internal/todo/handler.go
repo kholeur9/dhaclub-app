@@ -48,6 +48,9 @@ func (s *HandlerTodo) GetTodoByIDHandler(w http.ResponseWriter, r *http.Request)
 }
 
 func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
-	getAllTodos := s.todoService.TodosList()
+	getAllTodos, err := s.todoService.TodosList()
+	if err != nil {
+		response.HandleServiceError(w, err)
+	}
 	response.WriteResponse(w, 200, getAllTodos)
 }

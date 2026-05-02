@@ -17,12 +17,12 @@ func NewPostgresTodo(db *sql.DB) *PostgresTodo {
 }
 
 func (pt *PostgresTodo) Add(t Todo) (*Todo, error) {
-	var todoCreated *Todo
-	row := pt.db.QueryRow(`INSERT INTO todos(id, description) VALUES($1, $2)`, t.ID, t.Description)
+	var todoCreated Todo
+	row := pt.db.QueryRow(`INSERT INTO todos(id, description) VALUES($1, $2) `, t.ID, t.Description)
 	if err := row.Scan(&todoCreated.ID, &todoCreated.Description, &todoCreated.IsDone); err != nil {
 		return nil, err
 	}
-	return todoCreated, nil
+	return &todoCreated, nil
 }
 
 func (pt *PostgresTodo) ExistsByDescription(description string) (bool, error) {
