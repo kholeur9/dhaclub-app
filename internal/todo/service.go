@@ -70,7 +70,7 @@ func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) 
 }
 
 func (ts *TodoService) GetTodoByID(id string) (*Todo, error) {
-	thisID, err := ts.store.GetByID(id)
+	todo, err := ts.store.GetByID(id)
 	if errors.Is(err, apperrors.ErrTodoNotFound) {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.NOT_FOUND,
@@ -82,13 +82,21 @@ func (ts *TodoService) GetTodoByID(id string) (*Todo, error) {
 			Message: "Internal server error",
 		}
 	}
-	return thisID, nil
+	return todo, nil
 }
 
 func (ts *TodoService) TodosList() ([]*Todo, error) {
 	getAllTodos, err := ts.store.TodosList()
 	if err != nil {
-		
+		return nil, err
 	}
 	return getAllTodos, nil
+}
+
+func (ts *TodoService) DeleteTodo(id string) error {
+	err := ts.DeleteTodo(id)
+	if err != nil {
+		return err
+	}
+	return nil
 }

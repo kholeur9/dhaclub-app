@@ -54,3 +54,12 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	response.WriteResponse(w, 200, getAllTodos)
 }
+
+func (s *HandlerTodo) DeleteTodoHandler(w http.ResponseWriter, r *http.Request) {
+	todoID := r.PathValue("id")
+	err := s.todoService.DeleteTodo(todoID)
+	if err != nil {
+		response.HandleServiceError(w, err)
+	}
+	response.WriteResponse(w, 200, todoID)
+}
