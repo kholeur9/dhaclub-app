@@ -38,7 +38,7 @@ func (s *HandlerTodo) CreateTodoHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 func (s *HandlerTodo) GetTodoByIDHandler(w http.ResponseWriter, r *http.Request) {
-	urlTodo := r.PathValue("todo_id")
+	urlTodo := r.PathValue("id")
 	todo, err := s.todoService.GetTodoByID(urlTodo)
 	if err != nil {
 		response.HandleServiceError(w, err)

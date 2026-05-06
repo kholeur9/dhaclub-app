@@ -94,7 +94,7 @@ func (ts *TodoService) TodosList() ([]*Todo, error) {
 }
 
 func (ts *TodoService) DeleteTodo(id string) error {
-	err := ts.DeleteTodo(id)
+	err := ts.store.DeleteTodo(id)
 	if err != nil {
 		return err
 	}

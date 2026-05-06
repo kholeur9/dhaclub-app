@@ -73,13 +73,14 @@ func (pt *PostgresTodo) GetByID(id string) (*Todo, error) {
 }
 
 func (pt *PostgresTodo) DeleteTodo(id string) error {
-	var todoID string
-	row := pt.db.QueryRow(`DELETE FROM todos WHERE id = $1`, id)
-	if err := row.Scan(&todoID); err != nil {
-		if err == sql.ErrNoRows {
-			return apperrors.ErrTodoNotFound
-		}
+	result, err := pt.db.Exec(`DELETE FROM todos WHERE id = $1`, id)
+	if err != nil {
 		return err
 	}
-	return nil
+	row, err := result.RowsAffected()
+	if row == 0 {
+		return apperrors.ErrTodoNotFound
+	} else {
+		return nil
+	}
 }
