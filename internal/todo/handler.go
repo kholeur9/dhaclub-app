@@ -51,15 +51,17 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 	getAllTodos, err := s.todoService.TodosList()
 	if err != nil {
 		response.HandleServiceError(w, err)
+		return
 	}
 	response.WriteResponse(w, 200, getAllTodos)
 }
 
 func (s *HandlerTodo) DeleteTodoHandler(w http.ResponseWriter, r *http.Request) {
-	todoID := r.PathValue("id")
-	err := s.todoService.DeleteTodo(todoID)
+	id := r.PathValue("id")
+	result, err := s.todoService.DeleteTodo(id)
 	if err != nil {
 		response.HandleServiceError(w, err)
+		return
 	}
-	response.WriteResponse(w, 200, todoID)
+	response.WriteResponse(w, 200, result)
 }

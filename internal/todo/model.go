@@ -17,5 +17,5 @@ type TodoStore interface {
 	ExistsByDescription(desc string) (bool, error)
 	TodosList() ([]*Todo, error)
 	GetByID(id string) (*Todo, error)
-	DeleteTodo(id string) error
+	DeleteTodo(id string) (*string, error)
 }

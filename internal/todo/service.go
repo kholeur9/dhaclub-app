@@ -93,10 +93,21 @@ func (ts *TodoService) TodosList() ([]*Todo, error) {
 	return getAllTodos, nil
 }
 
-func (ts *TodoService) DeleteTodo(id string) error {
-	err := ts.store.DeleteTodo(id)
-	if err != nil {
-		return err
+func (ts *TodoService) DeleteTodo(id string) (*DeleteTodoResponse, error) {
+	todoID, err := ts.store.DeleteTodo(id)
+	if errors.Is(err, apperrors.ErrTodoNotFound) {
+		return nil,&apperrors.ServiceError{
+			Type: apperrors.NOT_FOUND,
+			Message: "todo not found.",
+		}
+	} else if err !=  nil {
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.INTERNAL,
+			Message: "Internal server error",
+		}
 	}
-	return nil
+	return &DeleteTodoResponse{
+		Message: "Todo deleted succesfuly",
+		ID: todoID,
+	}, nil
 }

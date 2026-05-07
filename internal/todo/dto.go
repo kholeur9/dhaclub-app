@@ -13,9 +13,12 @@ type CreateTodoDto struct {
 type GetTodoByIdDto struct {
 	ID string `json:"id"`
 }
-
 type CreateTodoResponse struct {
 	Message string  `json:"message"`
 	Data    TodoDto `json:"data"`
 }
 
+type DeleteTodoResponse struct {
+	Message string `json:"message"`
+	ID      *string `json:"id"`
+}
