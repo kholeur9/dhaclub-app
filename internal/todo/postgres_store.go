@@ -83,3 +83,12 @@ func (pt *PostgresTodo) DeleteTodo(id string) (*string, error) {
 	}
 	return &todoID, nil
 }
+
+func (pt *PostgresTodo) UpdateTodo(todo Todo) (*Todo, error) {
+	var todoUpdated Todo
+	row := pt.db.QueryRow(`UPDATE todos SET description = $1, updated_at = $2 WHERE id = $3 RETURNING id, description, is_done, created_at, updated_at`, todo.Description, todo.ID)
+	if err := row.Scan(&todoUpdated.ID, &todoUpdated.Description, &todoUpdated.IsDone, &todoUpdated.CreatedAt, &todoUpdated.UpdatedAt); err != nil {
+		return nil, err
+	}
+	return &todoUpdated, nil
+}

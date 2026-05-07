@@ -96,7 +96,7 @@ func (ts *TodoService) TodosList() ([]*Todo, error) {
 func (ts *TodoService) DeleteTodo(id string) (*DeleteTodoResponse, error) {
 	todoID, err := ts.store.DeleteTodo(id)
 	if errors.Is(err, apperrors.ErrTodoNotFound) {
-		return nil,&apperrors.ServiceError{
+		return nil, &apperrors.ServiceError{
 			Type: apperrors.NOT_FOUND,
 			Message: "todo not found.",
 		}
@@ -110,4 +110,32 @@ func (ts *TodoService) DeleteTodo(id string) (*DeleteTodoResponse, error) {
 		Message: "Todo deleted succesfuly",
 		ID: todoID,
 	}, nil
+}
+
+func (ts *TodoService) UpdateTodo(t Todo) (*Todo, error) {
+	var todoUpdate *Todo
+	todoExists, err := ts.store.GetByID(t.ID)
+	if errors.Is(err, apperrors.ErrTodoNotFound) {
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.NOT_FOUND,
+			Message: "Todo does not exist.",
+		}
+	} else if err != nil {
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.INTERNAL,
+			Message: "Internal server error",
+		}
+	}
+	if t.Description == todoExists.Description && t.IsDone == todoExists.IsDone {
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.CONFLICT,
+			Message: "Nothing has changed.",
+		}
+	}
+	if t.Description == todoExists.Description && t.IsDone != todoExists.IsDone {
+		todoUpdate := &todoUpdate{
+
+		}
+		ts.store.UpdatedTodo(t)
+	}
 }
