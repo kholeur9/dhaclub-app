@@ -1,9 +1,9 @@
 package todo
 
 import (
-	//"fmt"
+	"fmt"
 	"errors"
-	//"time"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/kholeur9/dhaclub-app/internal/apperrors"
@@ -112,8 +112,9 @@ func (ts *TodoService) DeleteTodo(id string) (*DeleteTodoResponse, error) {
 	}, nil
 }
 
-func (ts *TodoService) UpdateTodo(t Todo) (*Todo, error) {
-	var todoUpdate *Todo
+func (ts *TodoService) UpdateTodo(t UpdateTodoDto) (*Todo, error) {
+	fmt.Println("service:", t)
+	var td Todo
 	todoExists, err := ts.store.GetByID(t.ID)
 	if errors.Is(err, apperrors.ErrTodoNotFound) {
 		return nil, &apperrors.ServiceError{
@@ -126,16 +127,24 @@ func (ts *TodoService) UpdateTodo(t Todo) (*Todo, error) {
 			Message: "Internal server error",
 		}
 	}
-	if t.Description == todoExists.Description && t.IsDone == todoExists.IsDone {
+	if t.Field.Description == todoExists.Description && t.Field.IsDone == todoExists.IsDone {
 		return nil, &apperrors.ServiceError{
 			Type: apperrors.CONFLICT,
 			Message: "Nothing has changed.",
 		}
 	}
-	if t.Description == todoExists.Description && t.IsDone != todoExists.IsDone {
-		todoUpdate := &todoUpdate{
-
+	nowUpdate := time.Now()
+	if t.Field.Description == todoExists.Description && t.Field.IsDone != todoExists.IsDone {
+		td = Todo{
+			IsDone: t.Field.IsDone,
+			UpdatedAt: &nowUpdate,
 		}
-		ts.store.UpdatedTodo(t)
+	} else if t.Field.Description != todoExists.Description && t.Field.IsDone == todoExists.IsDone {
+		td = Todo{
+			Description: t.Field.Description,
+			UpdatedAt: &nowUpdate,
+		}
 	}
+	todoUpdated, err := ts.store.UpdateTodo(td)
+	return todoUpdated, nil
 }
