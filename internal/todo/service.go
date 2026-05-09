@@ -1,7 +1,6 @@
 package todo
 
 import (
-	"fmt"
 	"errors"
 	"time"
 
@@ -97,54 +96,62 @@ func (ts *TodoService) DeleteTodo(id string) (*DeleteTodoResponse, error) {
 	todoID, err := ts.store.DeleteTodo(id)
 	if errors.Is(err, apperrors.ErrTodoNotFound) {
 		return nil, &apperrors.ServiceError{
-			Type: apperrors.NOT_FOUND,
+			Type:    apperrors.NOT_FOUND,
 			Message: "todo not found.",
 		}
-	} else if err !=  nil {
+	} else if err != nil {
 		return nil, &apperrors.ServiceError{
-			Type: apperrors.INTERNAL,
+			Type:    apperrors.INTERNAL,
 			Message: "Internal server error",
 		}
 	}
 	return &DeleteTodoResponse{
 		Message: "Todo deleted succesfuly",
-		ID: todoID,
+		ID:      todoID,
 	}, nil
 }
 
-func (ts *TodoService) UpdateTodo(t UpdateTodoDto) (*Todo, error) {
-	fmt.Println("service:", t)
-	var td Todo
-	todoExists, err := ts.store.GetByID(t.ID)
+func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
+	var updateField UpdateFieldDto
+	todoExists, err := ts.store.GetByID(id)
 	if errors.Is(err, apperrors.ErrTodoNotFound) {
 		return nil, &apperrors.ServiceError{
-			Type: apperrors.NOT_FOUND,
+			Type:    apperrors.NOT_FOUND,
 			Message: "Todo does not exist.",
 		}
 	} else if err != nil {
 		return nil, &apperrors.ServiceError{
-			Type: apperrors.INTERNAL,
+			Type:    apperrors.INTERNAL,
 			Message: "Internal server error",
 		}
 	}
-	if t.Field.Description == todoExists.Description && t.Field.IsDone == todoExists.IsDone {
-		return nil, &apperrors.ServiceError{
-			Type: apperrors.CONFLICT,
-			Message: "Nothing has changed.",
+	if t.IsDone != nil {
+		isDone := *t.IsDone
+		if isDone == todoExists.IsDone {
+			return nil, &apperrors.ServiceError{
+				Type:    apperrors.CONFLICT,
+				Message: "Nothing has changed.",
+			}
+		}
+		updateField = UpdateFieldDto{
+			ID:        id,
+			IsDone:    &isDone,
+			UpdatedAt: time.Now(),
+		}
+	} else if t.Description != nil {
+		description := *t.Description
+		if description == todoExists.Description {
+			return nil, &apperrors.ServiceError{
+				Type:    apperrors.CONFLICT,
+				Message: "Nothing has changed.",
+			}
+		}
+		updateField = UpdateFieldDto{
+			ID:          id,
+			Description: &description,
+			UpdatedAt:   time.Now(),
 		}
 	}
-	nowUpdate := time.Now()
-	if t.Field.Description == todoExists.Description && t.Field.IsDone != todoExists.IsDone {
-		td = Todo{
-			IsDone: t.Field.IsDone,
-			UpdatedAt: &nowUpdate,
-		}
-	} else if t.Field.Description != todoExists.Description && t.Field.IsDone == todoExists.IsDone {
-		td = Todo{
-			Description: t.Field.Description,
-			UpdatedAt: &nowUpdate,
-		}
-	}
-	todoUpdated, err := ts.store.UpdateTodo(td)
+	todoUpdated, err := ts.store.UpdateTodo(updateField)
 	return todoUpdated, nil
 }

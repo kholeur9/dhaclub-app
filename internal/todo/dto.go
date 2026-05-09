@@ -1,11 +1,12 @@
 package todo
 
+import "time"
+
 type TodoDto struct {
 	ID          string `json:"id"`
 	Description string `json:"description"`
 	Done        bool   `json:"done"`
 }
-
 type CreateTodoDto struct {
 	Description string `json:"description"`
 }
@@ -17,15 +18,16 @@ type CreateTodoResponse struct {
 	Data    TodoDto `json:"data"`
 }
 type DeleteTodoResponse struct {
-	Message string `json:"message"`
+	Message string  `json:"message"`
 	ID      *string `json:"id"`
 }
-
-type FieldModified struct {
-	Description string `json:"description"`
-	IsDone bool `json:"is_done"`
-}
 type UpdateTodoDto struct {
-	ID string `json:"id"`
-	Field FieldModified `json:"field"`
+	Description *string `json:"description"`
+	IsDone      *bool   `json:"is_done"`
+}
+type UpdateFieldDto struct {
+	ID    string        `json:"id"`
+	Description *string `json:"description"`
+	IsDone      *bool   `json:"is_done"`
+	UpdatedAt time.Time `json:"updated_at"`
 }

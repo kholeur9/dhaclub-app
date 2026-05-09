@@ -18,5 +18,5 @@ type TodoStore interface {
 	TodosList() ([]*Todo, error)
 	GetByID(id string) (*Todo, error)
 	DeleteTodo(id string) (*string, error)
-	UpdateTodo(t Todo) (*Todo, error)
+	UpdateTodo(t UpdateFieldDto) (*Todo, error)
 }

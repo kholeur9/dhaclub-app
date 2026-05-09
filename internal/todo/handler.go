@@ -1,7 +1,7 @@
 package todo
 
 import (
-	"fmt"
+	//"fmt"
 	//"context"
 	"encoding/json"
 
@@ -68,13 +68,14 @@ func (s *HandlerTodo) DeleteTodoHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 func (s *HandlerTodo) UpdateTodoHandler(w http.ResponseWriter, r *http.Request) {
-	structData := UpdateTodoDto{}
+	id := r.PathValue("id")
+	var structData UpdateTodoDto
 	if err := json.NewDecoder(r.Body).Decode(&structData); err != nil {
 		response.HandleServiceError(w, err)
 		return
 	}
-	fmt.Println("Handler", structData.Field.IsDone)
-	result, err := s.todoService.UpdateTodo(structData)
+	//fmt.Printf("%+v\n", structData)
+	result, err := s.todoService.UpdateTodo(id, structData)
 	if err != nil {
 		response.HandleServiceError(w, err)
 		return

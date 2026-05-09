@@ -1,8 +1,8 @@
 package todo
 
 import (
-	"fmt"
 	"database/sql"
+	//"fmt"
 
 	"github.com/kholeur9/dhaclub-app/internal/apperrors"
 )
@@ -64,7 +64,7 @@ func (pt *PostgresTodo) GetByID(id string) (*Todo, error) {
 	row := pt.db.QueryRow(`
 	SELECT id, description, is_done, created_at, updated_at FROM todos WHERE id = $1`, id)
 	err := row.Scan(&todo.ID, &todo.Description, &todo.IsDone, &todo.CreatedAt, &todo.UpdatedAt)
-	if err != nil{
+	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, apperrors.ErrTodoNotFound
 		}
@@ -85,12 +85,19 @@ func (pt *PostgresTodo) DeleteTodo(id string) (*string, error) {
 	return &todoID, nil
 }
 
-func (pt *PostgresTodo) UpdateTodo(todo Todo) (*Todo, error) {
-	fmt.Println("Postgres", todo)
+func (pt *PostgresTodo) UpdateTodo(dto UpdateFieldDto) (*Todo, error) {
+	//fmt.Printf("Postgres: %+v\n", dto)
 	var todoUpdated Todo
-	row := pt.db.QueryRow(`UPDATE todos SET description = $1, updated_at = $2 WHERE id = $3 RETURNING id, description, is_done, created_at, updated_at`, todo.Description, todo.UpdatedAt, todo.ID)
-	if err := row.Scan(&todoUpdated.ID, &todoUpdated.Description, &todoUpdated.IsDone, &todoUpdated.CreatedAt, &todoUpdated.UpdatedAt); err != nil {
-		return nil, err
+	if dto.Description != nil {
+		row := pt.db.QueryRow(`UPDATE todos SET description = $1, is_done = $2, updated_at = $3 WHERE id = $4 RETURNING id, description, is_done, created_at, updated_at`, dto.Description, false, dto.UpdatedAt, dto.ID)
+		if err := row.Scan(&todoUpdated.ID, &todoUpdated.Description, &todoUpdated.IsDone, &todoUpdated.CreatedAt, &todoUpdated.UpdatedAt); err != nil {
+			return nil, err
+		}
+	} else if dto.IsDone != nil {
+		row := pt.db.QueryRow(`UPDATE todos SET is_done = $1, updated_at = $2 WHERE id = $3 RETURNING id, description, is_done, created_at, updated_at`, dto.IsDone, dto.UpdatedAt, dto.ID)
+		if err := row.Scan(&todoUpdated.ID, &todoUpdated.Description, &todoUpdated.IsDone, &todoUpdated.CreatedAt, &todoUpdated.UpdatedAt); err != nil {
+			return nil, err
+		}
 	}
 	return &todoUpdated, nil
 }

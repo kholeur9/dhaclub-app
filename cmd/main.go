@@ -27,7 +27,7 @@ func main() {
 	router.HandleFunc("GET /todos/{id}", HandlerTodo.GetTodoByIDHandler)
 	router.HandleFunc("GET /todos", HandlerTodo.TodosListHandler)
 	router.HandleFunc("DELETE /todos/{id}", HandlerTodo.DeleteTodoHandler)
-	router.HandleFunc("PATCH /todos", HandlerTodo.UpdateTodoHandler)
+	router.HandleFunc("PATCH /todos/{id}", HandlerTodo.UpdateTodoHandler)
 
 	//router.Handle("GET /", http.FileServer(http.Dir("static")))
 
