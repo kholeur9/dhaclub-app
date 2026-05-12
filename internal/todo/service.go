@@ -23,7 +23,7 @@ func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) 
 	if t.Description == "" {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.VALIDATION,
-			Message: "Must have an description",
+			Message: "Description is required.",
 		}
 	}
 	// Verify the length
@@ -106,7 +106,7 @@ func (ts *TodoService) DeleteTodo(id string) (*DeleteTodoResponse, error) {
 		}
 	}
 	return &DeleteTodoResponse{
-		Message: "Todo deleted succesfuly",
+		Message: "Succesfully",
 		ID:      todoID,
 	}, nil
 }
@@ -119,16 +119,18 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 			Message: "No field to update.",
 		}
 	}
-	if *t.Description == "" {
-		return nil, &apperrors.ServiceError{
-			Type:    apperrors.VALIDATION,
-			Message: "Must have an description",
+	if t.Description != nil {
+		if *t.Description == "" {
+			return nil, &apperrors.ServiceError{
+				Type:    apperrors.VALIDATION,
+				Message: "Description is required.",
+			}
 		}
-	}
-	if len(*t.Description) <= 2 {
-		return nil, &apperrors.ServiceError{
-			Type:    apperrors.VALIDATION,
-			Message: "Description too short",
+		if len(*t.Description) <= 2 {
+			return nil, &apperrors.ServiceError{
+				Type:    apperrors.VALIDATION,
+				Message: "Description too short",
+			}
 		}
 	}
 	todoExists, err := ts.store.GetByID(id)
