@@ -128,7 +128,17 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 	if t.Description != nil && t.IsDone != nil {
 		description := *t.Description
 		isDone := *t.IsDone
-		if (description != todoExists.Description || description == todoExists.Description) && (isDone != todoExists.IsDone && isDone == todoExists.IsDone) {
+		if description != todoExists.Description && isDone == todoExists.IsDone {
+			return nil, &apperrors.ServiceError{
+				Type: apperrors.CONFLICT,
+				Message: "It is impossible to edit a todo and mark it as already done at the same time.",
+			}
+		} else if description == todoExists.Description && isDone != todoExists.IsDone {
+			return nil, &apperrors.ServiceError{
+				Type: apperrors.CONFLICT,
+				Message: "It is impossible to edit a todo and mark it as already done at the same time.",
+			}
+		} else {
 			return nil, &apperrors.ServiceError{
 				Type: apperrors.CONFLICT,
 				Message: "It is impossible to edit a todo and mark it as already done at the same time.",
