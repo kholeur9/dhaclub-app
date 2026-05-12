@@ -5,7 +5,7 @@ import "time"
 type TodoDto struct {
 	ID          string `json:"id"`
 	Description string `json:"description"`
-	Done        bool   `json:"done"`
+	Done        bool   `json:"is_done"`
 }
 type CreateTodoDto struct {
 	Description string `json:"description"`

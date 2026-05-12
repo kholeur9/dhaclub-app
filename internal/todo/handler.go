@@ -26,7 +26,7 @@ func (s *HandlerTodo) CreateTodoHandler(w http.ResponseWriter, r *http.Request) 
 	// read and matched elements to body in struct
 	structData := CreateTodoDto{}
 	if readJSON := json.NewDecoder(clientData).Decode(&structData); readJSON != nil {
-		http.Error(w, "JSON failed", http.StatusBadRequest)
+		response.HandleServiceError(w, readJSON)
 		return
 	}
 	// Send data at service

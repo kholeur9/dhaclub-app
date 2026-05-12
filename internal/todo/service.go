@@ -113,6 +113,24 @@ func (ts *TodoService) DeleteTodo(id string) (*DeleteTodoResponse, error) {
 
 func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 	var updateField UpdateFieldDto
+	if t.Description == nil && t.IsDone == nil {
+		return nil, &apperrors.ServiceError{
+			Type:    apperrors.VALIDATION,
+			Message: "No field to update.",
+		}
+	}
+	if *t.Description == "" {
+		return nil, &apperrors.ServiceError{
+			Type:    apperrors.VALIDATION,
+			Message: "Must have an description",
+		}
+	}
+	if len(*t.Description) <= 2 {
+		return nil, &apperrors.ServiceError{
+			Type:    apperrors.VALIDATION,
+			Message: "Description too short",
+		}
+	}
 	todoExists, err := ts.store.GetByID(id)
 	if errors.Is(err, apperrors.ErrTodoNotFound) {
 		return nil, &apperrors.ServiceError{
@@ -126,23 +144,9 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 		}
 	}
 	if t.Description != nil && t.IsDone != nil {
-		description := *t.Description
-		isDone := *t.IsDone
-		if description != todoExists.Description && isDone == todoExists.IsDone {
-			return nil, &apperrors.ServiceError{
-				Type: apperrors.CONFLICT,
-				Message: "It is impossible to edit a todo and mark it as already done at the same time.",
-			}
-		} else if description == todoExists.Description && isDone != todoExists.IsDone {
-			return nil, &apperrors.ServiceError{
-				Type: apperrors.CONFLICT,
-				Message: "It is impossible to edit a todo and mark it as already done at the same time.",
-			}
-		} else {
-			return nil, &apperrors.ServiceError{
-				Type: apperrors.CONFLICT,
-				Message: "It is impossible to edit a todo and mark it as already done at the same time.",
-			}
+		return nil, &apperrors.ServiceError{
+			Type:    apperrors.CONFLICT,
+			Message: "It is impossible to edit a todo and mark it as already done at the same time.",
 		}
 	}
 	if t.IsDone != nil {
@@ -173,5 +177,11 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 		}
 	}
 	todoUpdated, err := ts.store.UpdateTodo(updateField)
+	if err != nil {
+		return nil, &apperrors.ServiceError{
+			Type:    apperrors.INTERNAL,
+			Message: "Internal server error",
+		}
+	}
 	return todoUpdated, nil
 }

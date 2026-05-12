@@ -22,5 +22,5 @@ type ServiceError struct {
 }
 
 func (se *ServiceError) Error() string {
-	return se.Error()
+	return se.Message
 }
