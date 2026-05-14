@@ -64,7 +64,7 @@ func (s *HandlerTodo) DeleteTodoHandler(w http.ResponseWriter, r *http.Request) 
 		response.HandleServiceError(w, err)
 		return
 	}
-	response.WriteResponse(w, 204, result)
+	response.WriteResponse(w, 200, result)
 }
 
 func (s *HandlerTodo) UpdateTodoHandler(w http.ResponseWriter, r *http.Request) {

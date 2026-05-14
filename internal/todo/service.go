@@ -171,8 +171,7 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 			IsDone:    &isDone,
 			UpdatedAt: time.Now(),
 		}
-	}
-	if t.Description != nil {
+	} else if t.Description != nil {
 		description := strings.TrimSpace(*t.Description)
 		exists, err := ts.store.ExistsByDescription(description)
 		if err != nil {
