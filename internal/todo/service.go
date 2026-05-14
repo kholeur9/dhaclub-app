@@ -2,6 +2,7 @@ package todo
 
 import (
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -20,42 +21,43 @@ func NewTodoService(store TodoStore) *TodoService {
 
 func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) {
 	// Verify if description is not registered
-	if t.Description == "" {
+	description := strings.TrimSpace(t.Description)
+	if description == "" {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.VALIDATION,
 			Message: "Description is required.",
 		}
 	}
 	// Verify the length
-	if len(t.Description) <= 2 {
+	if len(description) <= 2 {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.VALIDATION,
-			Message: "Description too short",
+			Message: "Description too short.",
 		}
 	}
-	todoExists, err := ts.store.ExistsByDescription(t.Description)
+	todoExists, err := ts.store.ExistsByDescription(description)
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,
-			Message: "Internal server error",
+			Message: "Internal server error.",
 		}
 	}
 	if todoExists {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.CONFLICT,
-			Message: "Todo already exists",
+			Message: "Todo already exists.",
 		}
 	}
 	createdID := uuid.New().String()
 	newTodo := Todo{
 		ID:          createdID,
-		Description: t.Description,
+		Description: description,
 	}
 	todo, err := ts.store.Add(newTodo)
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,
-			Message: "Internal server error",
+			Message: "Internal server error.",
 		}
 	}
 	return &CreateTodoResponse{
@@ -73,12 +75,12 @@ func (ts *TodoService) GetTodoByID(id string) (*Todo, error) {
 	if errors.Is(err, apperrors.ErrTodoNotFound) {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.NOT_FOUND,
-			Message: "Todo not found",
+			Message: "Todo not found.",
 		}
 	} else if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,
-			Message: "Internal server error",
+			Message: "Internal server error.",
 		}
 	}
 	return todo, nil
@@ -102,7 +104,7 @@ func (ts *TodoService) DeleteTodo(id string) (*DeleteTodoResponse, error) {
 	} else if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,
-			Message: "Internal server error",
+			Message: "Internal server error.",
 		}
 	}
 	return &DeleteTodoResponse{
@@ -120,7 +122,8 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 		}
 	}
 	if t.Description != nil {
-		if *t.Description == "" {
+		description := strings.TrimSpace(*t.Description)
+		if description == "" {
 			return nil, &apperrors.ServiceError{
 				Type:    apperrors.VALIDATION,
 				Message: "Description is required.",
@@ -137,12 +140,12 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 	if errors.Is(err, apperrors.ErrTodoNotFound) {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.NOT_FOUND,
-			Message: "Todo does not exist.",
+			Message: "Todo not found.",
 		}
 	} else if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,
-			Message: "Internal server error",
+			Message: "Internal server error.",
 		}
 	}
 	if t.Description != nil && t.IsDone != nil {
@@ -165,7 +168,19 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 			UpdatedAt: time.Now(),
 		}
 	} else if t.Description != nil {
-		description := *t.Description
+		description := strings.TrimSpace(*t.Description)
+		if desc, err := ts.store.ExistsByDescription(description); desc {
+			if err != nil {
+				return nil, &apperrors.ServiceError{
+					Type:    apperrors.INTERNAL,
+					Message: "Internal server error.",
+				}
+			}
+			return nil, &apperrors.ServiceError{
+				Type:    apperrors.CONFLICT,
+				Message: "This description is already a todo.",
+			}
+		}
 		if description == todoExists.Description {
 			return nil, &apperrors.ServiceError{
 				Type:    apperrors.CONFLICT,
@@ -182,7 +197,7 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,
-			Message: "Internal server error",
+			Message: "Internal server error.",
 		}
 	}
 	return todoUpdated, nil
