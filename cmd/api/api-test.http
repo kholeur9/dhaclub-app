@@ -5,10 +5,18 @@ post http://localhost:8080/todo
 }
 
 ###
-get http://localhost:8080/todos/b620e4b0-03bb-41f9-a2e3-5fef94f5e14f
+get http://localhost:8080/todos/88f67b3e-5b92-47e0-a7cb-0d274cf57228
 
 ###
 get http://localhost:8080/todos
 
 ###
-delete http://localhost:8080/todos/6f3a9668-7efc-4df6-91a8-9506ddf67d98
+delete http://localhost:8080/todos/88f67b3e-5b92-47e0-a7cb-0d274cf57229
+
+###
+patch http://localhost:8080/todos/f31041a5-ee83-4036-82e8-0916c9701e86
+
+{
+    "description": "1er mai 2025.",
+    "is_done": true
+}

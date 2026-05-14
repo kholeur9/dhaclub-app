@@ -89,7 +89,7 @@ func (ts *TodoService) TodosList() ([]*Todo, error) {
 	getAllTodos, err := ts.store.TodosList()
 	if err != nil {
 		return nil, &apperrors.ServiceError{
-			Type: apperrors.INTERNAL,
+			Type:    apperrors.INTERNAL,
 			Message: apperrors.ErrInternalServerErrorMessage,
 		}
 	}
@@ -103,7 +103,7 @@ func (ts *TodoService) DeleteTodo(id string) (*DeleteTodoResponse, error) {
 			Type:    apperrors.NOT_FOUND,
 			Message: apperrors.ErrTodoNotFoundMessage,
 		}
-	} 
+	}
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,
@@ -132,7 +132,7 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 				Message: "Description is required.",
 			}
 		}
-		if len(*t.Description) <= 2 {
+		if len(description) <= 2 {
 			return nil, &apperrors.ServiceError{
 				Type:    apperrors.VALIDATION,
 				Message: "Description too short.",
@@ -174,13 +174,14 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 	}
 	if t.Description != nil {
 		description := strings.TrimSpace(*t.Description)
-		if desc, err := ts.store.ExistsByDescription(description); desc {
-			if err != nil {
-				return nil, &apperrors.ServiceError{
-					Type:    apperrors.INTERNAL,
-					Message: apperrors.ErrInternalServerErrorMessage,
-				}
+		exists, err := ts.store.ExistsByDescription(description)
+		if err != nil {
+			return nil, &apperrors.ServiceError{
+				Type:    apperrors.INTERNAL,
+				Message: apperrors.ErrInternalServerErrorMessage,
 			}
+		}
+		if exists {
 			return nil, &apperrors.ServiceError{
 				Type:    apperrors.CONFLICT,
 				Message: "This description is already a todo.",
