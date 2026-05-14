@@ -86,7 +86,6 @@ func (pt *PostgresTodo) DeleteTodo(id string) (*string, error) {
 }
 
 func (pt *PostgresTodo) UpdateTodo(dto UpdateFieldDto) (*Todo, error) {
-	//fmt.Printf("Postgres: %+v\n", dto)
 	var todoUpdated Todo
 	if dto.Description != nil {
 		row := pt.db.QueryRow(`UPDATE todos SET description = $1, is_done = $2, updated_at = $3 WHERE id = $4 RETURNING id, description, is_done, created_at, updated_at`, dto.Description, false, dto.UpdatedAt, dto.ID)

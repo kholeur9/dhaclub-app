@@ -20,7 +20,6 @@ func NewTodoService(store TodoStore) *TodoService {
 }
 
 func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) {
-	// Verify if description is not registered
 	description := strings.TrimSpace(t.Description)
 	if description == "" {
 		return nil, &apperrors.ServiceError{
@@ -28,7 +27,6 @@ func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) 
 			Message: "Description is required.",
 		}
 	}
-	// Verify the length
 	if len(description) <= 2 {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.VALIDATION,
