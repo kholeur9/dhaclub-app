@@ -61,7 +61,7 @@ func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) 
 		}
 	}
 	return &CreateTodoResponse{
-		Message: "Création réussie",
+		Message: "Succesfully",
 		Data: TodoDto{
 			ID:          todo.ID,
 			Description: todo.Description,
@@ -77,7 +77,8 @@ func (ts *TodoService) GetTodoByID(id string) (*Todo, error) {
 			Type:    apperrors.NOT_FOUND,
 			Message: "Todo not found.",
 		}
-	} else if err != nil {
+	}
+	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,
 			Message: "Internal server error.",
@@ -99,9 +100,10 @@ func (ts *TodoService) DeleteTodo(id string) (*DeleteTodoResponse, error) {
 	if errors.Is(err, apperrors.ErrTodoNotFound) {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.NOT_FOUND,
-			Message: "todo not found.",
+			Message: "Todo not found.",
 		}
-	} else if err != nil {
+	} 
+	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,
 			Message: "Internal server error.",
@@ -132,7 +134,7 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 		if len(*t.Description) <= 2 {
 			return nil, &apperrors.ServiceError{
 				Type:    apperrors.VALIDATION,
-				Message: "Description too short",
+				Message: "Description too short.",
 			}
 		}
 	}
@@ -142,7 +144,8 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 			Type:    apperrors.NOT_FOUND,
 			Message: "Todo not found.",
 		}
-	} else if err != nil {
+	}
+	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,
 			Message: "Internal server error.",
@@ -167,7 +170,8 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 			IsDone:    &isDone,
 			UpdatedAt: time.Now(),
 		}
-	} else if t.Description != nil {
+	}
+	if t.Description != nil {
 		description := strings.TrimSpace(*t.Description)
 		if desc, err := ts.store.ExistsByDescription(description); desc {
 			if err != nil {
