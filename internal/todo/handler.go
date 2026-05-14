@@ -21,11 +21,9 @@ func NewHandlerTodo(todoService *TodoService) *HandlerTodo {
 }
 
 func (s *HandlerTodo) CreateTodoHandler(w http.ResponseWriter, r *http.Request) {
-	// taked json of body
-	clientData := r.Body
 	// read and matched elements to body in struct
-	structData := CreateTodoDto{}
-	if readJSON := json.NewDecoder(clientData).Decode(&structData); readJSON != nil {
+	var structData CreateTodoDto
+	if readJSON := json.NewDecoder(r.Body).Decode(&structData); readJSON != nil {
 		response.HandleServiceError(w, readJSON)
 		return
 	}
