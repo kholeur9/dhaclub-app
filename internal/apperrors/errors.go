@@ -10,6 +10,11 @@ var (
 )
 
 const (
+	ErrInternalServerErrorMessage = "Internal server error."
+	ErrTodoNotFoundMessage        = "Todo not found."
+)
+
+const (
 	VALIDATION = "VALIDATION"
 	CONFLICT   = "CONFLICT"
 	INTERNAL   = "INTERNAL"

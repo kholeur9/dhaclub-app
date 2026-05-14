@@ -39,7 +39,7 @@ func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) 
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,
-			Message: "Internal server error.",
+			Message: apperrors.ErrInternalServerErrorMessage,
 		}
 	}
 	if todoExists {
@@ -57,7 +57,7 @@ func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) 
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,
-			Message: "Internal server error.",
+			Message: apperrors.ErrInternalServerErrorMessage,
 		}
 	}
 	return &CreateTodoResponse{
@@ -75,13 +75,13 @@ func (ts *TodoService) GetTodoByID(id string) (*Todo, error) {
 	if errors.Is(err, apperrors.ErrTodoNotFound) {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.NOT_FOUND,
-			Message: "Todo not found.",
+			Message: apperrors.ErrTodoNotFoundMessage,
 		}
 	}
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,
-			Message: "Internal server error.",
+			Message: apperrors.ErrInternalServerErrorMessage,
 		}
 	}
 	return todo, nil
@@ -90,7 +90,10 @@ func (ts *TodoService) GetTodoByID(id string) (*Todo, error) {
 func (ts *TodoService) TodosList() ([]*Todo, error) {
 	getAllTodos, err := ts.store.TodosList()
 	if err != nil {
-		return nil, err
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.INTERNAL,
+			Message: apperrors.ErrInternalServerErrorMessage,
+		}
 	}
 	return getAllTodos, nil
 }
@@ -100,13 +103,13 @@ func (ts *TodoService) DeleteTodo(id string) (*DeleteTodoResponse, error) {
 	if errors.Is(err, apperrors.ErrTodoNotFound) {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.NOT_FOUND,
-			Message: "Todo not found.",
+			Message: apperrors.ErrTodoNotFoundMessage,
 		}
 	} 
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,
-			Message: "Internal server error.",
+			Message: apperrors.ErrInternalServerErrorMessage,
 		}
 	}
 	return &DeleteTodoResponse{
@@ -142,13 +145,13 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 	if errors.Is(err, apperrors.ErrTodoNotFound) {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.NOT_FOUND,
-			Message: "Todo not found.",
+			Message: apperrors.ErrTodoNotFoundMessage,
 		}
 	}
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,
-			Message: "Internal server error.",
+			Message: apperrors.ErrInternalServerErrorMessage,
 		}
 	}
 	if t.Description != nil && t.IsDone != nil {
@@ -177,7 +180,7 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 			if err != nil {
 				return nil, &apperrors.ServiceError{
 					Type:    apperrors.INTERNAL,
-					Message: "Internal server error.",
+					Message: apperrors.ErrInternalServerErrorMessage,
 				}
 			}
 			return nil, &apperrors.ServiceError{
@@ -201,7 +204,7 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,
-			Message: "Internal server error.",
+			Message: apperrors.ErrInternalServerErrorMessage,
 		}
 	}
 	return todoUpdated, nil
