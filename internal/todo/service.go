@@ -59,7 +59,7 @@ func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) 
 		}
 	}
 	return &CreateTodoResponse{
-		Message: "Succesfully",
+		Message: "Successfully",
 		Data: TodoDto{
 			ID:          todo.ID,
 			Description: todo.Description,
@@ -111,7 +111,7 @@ func (ts *TodoService) DeleteTodo(id string) (*DeleteTodoResponse, error) {
 		}
 	}
 	return &DeleteTodoResponse{
-		Message: "Succesfully",
+		Message: "Successfully",
 		ID:      todoID,
 	}, nil
 }
@@ -173,6 +173,12 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 		}
 	} else if t.Description != nil {
 		description := strings.TrimSpace(*t.Description)
+		if description == todoExists.Description {
+			return nil, &apperrors.ServiceError{
+				Type:    apperrors.CONFLICT,
+				Message: "Nothing has changed.",
+			}
+		}
 		exists, err := ts.store.ExistsByDescription(description)
 		if err != nil {
 			return nil, &apperrors.ServiceError{
@@ -184,12 +190,6 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 			return nil, &apperrors.ServiceError{
 				Type:    apperrors.CONFLICT,
 				Message: "This description is already a todo.",
-			}
-		}
-		if description == todoExists.Description {
-			return nil, &apperrors.ServiceError{
-				Type:    apperrors.CONFLICT,
-				Message: "Nothing has changed.",
 			}
 		}
 		updateField = UpdateFieldDto{
