@@ -1,7 +1,7 @@
 package user
 
 import (
-	"fmt"
+	//"fmt"
 
 	"github.com/google/uuid"
 	"github.com/kholeur9/dhaclub-app/internal/apperrors"

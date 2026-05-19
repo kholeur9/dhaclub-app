@@ -2,7 +2,7 @@ package user
 
 import (
 	"encoding/json"
-	"fmt"
+	//"fmt"
 	"net/http"
 
 	"github.com/kholeur9/dhaclub-app/internal/response"

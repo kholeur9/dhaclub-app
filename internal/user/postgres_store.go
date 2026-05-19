@@ -2,7 +2,7 @@ package user
 
 import (
 	"database/sql"
-	"fmt"
+	///"fmt"
 )
 
 type PostgresUser struct {
