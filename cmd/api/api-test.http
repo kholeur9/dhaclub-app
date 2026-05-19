@@ -26,6 +26,6 @@ post http://localhost:8080/user
 
 {
     "email": "yannewilfriedm@gmail.com",
-    "username": "",
-    "password": ""
+    "username": "thekho",
+    "password": "Y5svxt4k"
 }

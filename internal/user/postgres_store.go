@@ -1,11 +1,18 @@
 package user
 
-import "fmt"
+import (
+	"database/sql"
+	"fmt"
+)
 
-type PostgresUser struct {}
+type PostgresUser struct {
+	db *sql.DB
+}
 
-func NewPostgresUser() *PostgresUser {
-	return &PostgresUser{}
+func NewPostgresUser(db *sql.DB) *PostgresUser {
+	return &PostgresUser{
+		db: db,
+	}
 }
 
 func (pu *PostgresUser) Create(user User) (*User, error) {

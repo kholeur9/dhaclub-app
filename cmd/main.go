@@ -9,6 +9,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/kholeur9/dhaclub-app/internal/db"
+	"github.com/kholeur9/dhaclub-app/internal/helpers"
 	"github.com/kholeur9/dhaclub-app/internal/todo"
 	"github.com/kholeur9/dhaclub-app/internal/user"
 )
@@ -31,8 +32,9 @@ func main() {
 	router.HandleFunc("PATCH /todos/{id}", HandlerTodo.UpdateTodoHandler)
 
 	//router.Handle("GET /", http.FileServer(http.Dir("static")))
-	UserStore := user.NewPostgresUser()
-	UserService := user.NewUserService(UserStore)
+	UserStore := user.NewPostgresUser(pg)
+	Secure := helpers.NewBcryptSecure()
+	UserService := user.NewUserService(UserStore, Secure)
 	UserHandler := user.NewUserHandler(UserService)
 	router.HandleFunc("POST /user", UserHandler.CreateUserHandler)
 

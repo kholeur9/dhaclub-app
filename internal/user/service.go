@@ -10,12 +10,13 @@ import (
 
 type UserService struct {
 	userStore UserStore
-	passwordSecured helpers.PasswordSecured
+	secure helpers.PasswordSecure
 }
 
-func NewUserService(userStore UserStore) *UserService{
+func NewUserService(userStore UserStore, secure helpers.PasswordSecure) *UserService{
 	return &UserService{
 		userStore: userStore,
+		secure: secure,
 	}
 }
 
@@ -49,7 +50,7 @@ func (us *UserService) CreateUser(u CreateUserDto) (*CreateUserResponseDto, erro
 			Message: "Password would have 8 caracteres minimum.",
 		}
 	}
-	passwordhashed, err := us.passwordSecured.PasswordHash(u.Password)
+	passwordhashed, err := us.secure.PasswordHash(u.Password)
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type: apperrors.INTERNAL,
