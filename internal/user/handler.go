@@ -12,10 +12,8 @@ type UserHandler struct {
 	service *UserService
 }
 
-func NewUserHandler(userService *UserService) *UserHandler {
-	return &UserHandler{
-		userService,
-	}
+func NewUserHandler(service *UserService) *UserHandler {
+	return &UserHandler{service}
 }
 
 func (hu *UserHandler) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -24,7 +22,6 @@ func (hu *UserHandler) CreateUserHandler(w http.ResponseWriter, r *http.Request)
 		response.HandleServiceError(w, err)
 		return
 	}
-	fmt.Println("Handler create user :", create)
 	user, err := hu.service.CreateUser(create)
 	if err != nil {
 		response.HandleServiceError(w, err)

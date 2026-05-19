@@ -21,7 +21,6 @@ func NewUserService(userStore UserStore, secure helpers.PasswordSecure) *UserSer
 }
 
 func (us *UserService) CreateUser(u CreateUserDto) (*CreateUserResponseDto, error) {
-	fmt.Println("Service create user :", u)
 	if u.Email == "" {
 		return nil, &apperrors.ServiceError{
 			Type: apperrors.VALIDATION,
