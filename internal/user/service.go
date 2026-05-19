@@ -63,12 +63,20 @@ func (us *UserService) CreateUser(u CreateUserDto) (*CreateUserResponseDto, erro
 		Username: u.Username,
 		Password: passwordhashed,
 	}
-	_, err = us.userStore.Create(newUser)
+	user, err := us.userStore.Create(newUser)
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type: apperrors.INTERNAL,
 			Message: "",
 		}
 	}
-	return nil, nil
+	return &CreateUserResponseDto{
+		Message: "Successfuly",
+		Data: CreateUserResponse{
+			ID: user.ID,
+			Email: user.Email,
+			Username: user.Username,
+			CreatedAt: user.CreatedAt,
+		},
+	}, nil
 }
