@@ -10,6 +10,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/kholeur9/dhaclub-app/internal/db"
 	"github.com/kholeur9/dhaclub-app/internal/todo"
+	"github.com/kholeur9/dhaclub-app/internal/user"
 )
 
 func main() {
@@ -19,8 +20,8 @@ func main() {
 
 	router := http.NewServeMux()
 
-	store := todo.NewPostgresTodo(pg)
-	TodoService := todo.NewTodoService(store)
+	TodoStore := todo.NewPostgresTodo(pg)
+	TodoService := todo.NewTodoService(TodoStore)
 	HandlerTodo := todo.NewHandlerTodo(TodoService)
 
 	router.HandleFunc("POST /todo", HandlerTodo.CreateTodoHandler)
@@ -30,6 +31,10 @@ func main() {
 	router.HandleFunc("PATCH /todos/{id}", HandlerTodo.UpdateTodoHandler)
 
 	//router.Handle("GET /", http.FileServer(http.Dir("static")))
+	UserStore := user.NewPostgresUser()
+	UserService := user.NewUserService(UserStore)
+	UserHandler := user.NewUserHandler(UserService)
+	router.HandleFunc("POST /user", UserHandler.CreateUserHandler)
 
 	log.Println("Starting server on port", port)
 	err := http.ListenAndServe(port, router)
