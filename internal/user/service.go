@@ -24,36 +24,36 @@ func (us *UserService) CreateUser(u CreateUserDto) (*CreateUserResponseDto, erro
 	if u.Email == "" {
 		return nil, &apperrors.ServiceError{
 			Type: apperrors.VALIDATION,
-			Message: "Email is required",
+			Message: apperrors.EmailRequired,
 		}
 	}
 	if u.Username == "" {
 		return nil, &apperrors.ServiceError{
 			Type: apperrors.VALIDATION,
-			Message: "Username is required",
+			Message: apperrors.UsernameRequired,
 		}
 	} else if len(u.Username) <= 1 {
 		return nil, &apperrors.ServiceError{
 			Type: apperrors.VALIDATION,
-			Message: "Username too short, enter more one caractere.",
+			Message: apperrors.UsernameShort,
 		}
 	} 
 	if u.Password == "" {
 		return nil, &apperrors.ServiceError{
 			Type: apperrors.VALIDATION,
-			Message: "Password is required",
+			Message: apperrors.PasswordRequired,
 		}
 	} else if len(u.Password) < 8 {
 		return nil, &apperrors.ServiceError{
 			Type: apperrors.VALIDATION,
-			Message: "Password would have 8 caracteres minimum.",
+			Message: apperrors.PasswordShort,
 		}
 	}
 	passwordhashed, err := us.secure.PasswordHash(u.Password)
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type: apperrors.INTERNAL,
-			Message: "Internal server error",
+			Message: apperrors.ErrInternalServerErrorMessage,
 		}
 	}
 	newUser := User{

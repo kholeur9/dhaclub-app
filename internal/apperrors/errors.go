@@ -12,6 +12,12 @@ var (
 const (
 	ErrInternalServerErrorMessage = "Internal server error."
 	ErrTodoNotFoundMessage        = "Todo not found."
+
+	EmailRequired = "Email is required"
+	UsernameRequired = "Username is required"
+	UsernameShort = "Username too short, enter more one caractere."
+	PasswordRequired = "Password is required"
+	PasswordShort = "Password would have 8 caracteres minimum."
 )
 
 const (
