@@ -66,7 +66,7 @@ func (us *UserService) CreateUser(u CreateUserDto) (*CreateUserResponseDto, erro
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type: apperrors.INTERNAL,
-			Message: "",
+			Message: apperrors.ErrInternalServerErrorMessage,
 		}
 	}
 	return &CreateUserResponseDto{

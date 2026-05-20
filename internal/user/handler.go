@@ -14,7 +14,7 @@ type UserHandler struct {
 
 func NewUserHandler(service *UserService) *UserHandler {
 	return &UserHandler{service}
-}
+} 
 
 func (hu *UserHandler) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	var create CreateUserDto
