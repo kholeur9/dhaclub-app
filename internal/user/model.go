@@ -13,4 +13,5 @@ type User struct {
 
 type UserStore interface {
 	Create(user User) (*User, error)
+	UserExistsByEmail(email string) (bool, error)
 }

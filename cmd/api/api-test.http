@@ -1,7 +1,7 @@
 post http://localhost:8080/todo
 
 {
-    "description": "8 mai 1995."
+    "description": "1 mai 1995."
 }
 
 ###
@@ -25,7 +25,7 @@ patch http://localhost:8080/todos/f31041a5-ee83-4036-82e8-0916c9701e86
 post http://localhost:8080/user
 
 {
-    "email": "yannewilfriedm@gmail.com",
+    "email": "yannewilfrie@gmail.com",
     "username": "thekho",
-    "password": "Y5svxt4k"
+    "password": "Vc4yr3af1"
 }

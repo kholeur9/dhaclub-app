@@ -7,6 +7,8 @@ var (
 	ErrTodoNotFound         = errors.New("todo not found")
 	ErrTodoTooShort         = errors.New("description too short")
 	ErrDescriptionTodoEmpty = errors.New("must have an description")
+
+	ErrUserNotFound = errors.New("User Not Found")
 )
 
 const (
@@ -18,6 +20,7 @@ const (
 	UsernameShort = "Username too short, enter more one caractere."
 	PasswordRequired = "Password is required"
 	PasswordShort = "Password would have 8 caracteres minimum."
+	UserAlreadyExists = "User already exists"
 )
 
 const (
