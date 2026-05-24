@@ -2,7 +2,7 @@ package user
 
 import (
 	"encoding/json"
-	//"fmt"
+	"fmt"
 	"net/http"
 
 	"github.com/kholeur9/dhaclub-app/internal/response"
@@ -22,6 +22,7 @@ func (hu *UserHandler) CreateUserHandler(w http.ResponseWriter, r *http.Request)
 		response.HandleServiceError(w, err)
 		return
 	}
+	fmt.Println("Handler", create)
 	user, err := hu.service.CreateUser(create)
 	if err != nil {
 		response.HandleServiceError(w, err)

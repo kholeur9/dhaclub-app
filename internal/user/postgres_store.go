@@ -27,14 +27,14 @@ func (pu *PostgresUser) Create(user User) (*User, error) {
 }
 
 func (pu *PostgresUser) UserExistsByEmail(email string) (bool, error) {
-	var exists int
-	row := pu.db.QueryRow(`SELECT 1 FROM users WHERE email = $1`, email)
+	var exists string
+	row := pu.db.QueryRow(`SELECT id FROM users WHERE email = $1`, email)
 	err := row.Scan(&exists)
-	if err == nil {
-		return true, nil
-	}
 	if err == sql.ErrNoRows {
 		return false, nil
 	}
-	return false, err
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }
