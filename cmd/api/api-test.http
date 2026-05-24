@@ -25,7 +25,14 @@ patch http://localhost:8080/todos/f31041a5-ee83-4036-82e8-0916c9701e86
 post http://localhost:8080/user
 
 {
-    "email": "yannewilfriedo@gmail.com",
-    "username": "thekho",
+    "email": "yannemoutsiga@gmail.com",
+    "username": "Tontine G02",
     "password": "Vc4yr3af1"
+}
+
+###
+patch http://localhost:8080/user/c76007ec-b538-4d06-a933-c979a2f95fb9
+
+{
+    "email": "yannewilfriedmoutsiga1@gmail.com"
 }

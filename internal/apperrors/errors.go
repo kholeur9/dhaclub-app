@@ -20,7 +20,11 @@ const (
 	UsernameShort = "Username too short, enter more one caractere."
 	PasswordRequired = "Password is required"
 	PasswordShort = "Password would have 8 caracteres minimum."
-	UserAlreadyExists = "User already exists"
+	EmailAlreadyExists = "Email already exists"
+	UsernameAlreadyExists = "Username already exists"
+
+	ErrUserNotFoundMessage = "User not Found"
+	EmailNotChange = "Email has no chnaged"
 )
 
 const (

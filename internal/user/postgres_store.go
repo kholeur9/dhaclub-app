@@ -3,6 +3,8 @@ package user
 import (
 	"database/sql"
 	"errors"
+
+	"github.com/kholeur9/dhaclub-app/internal/apperrors"
 	//"github.com/kholeur9/dhaclub-app/internal/apperrors"
 	///"fmt"
 )
@@ -27,6 +29,19 @@ func (pu *PostgresUser) Create(user User) (*User, error) {
 	return &userCreated, nil
 }
 
+func (pu *PostgresUser) FindConflicts(email, username *string) (*User, error) {
+	var user User
+	row := pu.db.QueryRow(`SELECT id, email, username FROM users WHERE email = $1 OR username = $2`, email, username)
+	err := row.Scan(&user.ID, &user.Email, &user.Username)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 func (pu *PostgresUser) UserExistsByEmail(email string) (bool, error) {
 	var id string
 	row := pu.db.QueryRow(`SELECT id FROM users WHERE email = $1`, email)
@@ -38,4 +53,27 @@ func (pu *PostgresUser) UserExistsByEmail(email string) (bool, error) {
 		return false, err
 	}
 	return true, nil
+}
+
+func (pu *PostgresUser) GetUserById(id string) (*GetUserResponseDto, error) {
+	var user GetUserResponseDto
+	row := pu.db.QueryRow(`SELECT id, email, username, created_at, updated_at FROM users WHERE id = $1`, id)
+	err := row.Scan(&user.ID, &user.Email, &user.Username, &user.CreatedAt, &user.UpdatedAt)
+	if err == sql.ErrNoRows {
+		return nil, apperrors.ErrUserNotFound
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (pu *PostgresUser) UpdateEmail(dto EmailUpdateResponse) (*User, error) {
+	var newUser User
+	row := pu.db.QueryRow(`UPDATE users SET email = $1, updated_at = $2 WHERE id = $3 RETURNING id, email, updated_at`, dto.Email, dto.UpdatedAt, dto.ID)
+	err := row.Scan(&newUser.ID, &newUser.Email, &newUser.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
+	return &newUser, nil
 }

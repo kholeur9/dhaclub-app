@@ -13,5 +13,8 @@ type User struct {
 
 type UserStore interface {
 	Create(user User) (*User, error)
+	FindConflicts(email, username *string) (*User, error)
 	UserExistsByEmail(email string) (bool, error)
+	GetUserById(id string) (*GetUserResponseDto, error)
+	UpdateEmail(dto EmailUpdateResponse) (*User, error)
 }

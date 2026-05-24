@@ -2,8 +2,9 @@ package user
 
 import (
 	//"fmt"
+	"time"
 
-	//"errors"
+	"errors"
 
 	"github.com/google/uuid"
 	"github.com/kholeur9/dhaclub-app/internal/apperrors"
@@ -52,17 +53,25 @@ func (us *UserService) CreateUser(u CreateUserDto) (*CreateUserResponseDto, erro
 			Message: apperrors.PasswordShort,
 		}
 	}
-	emailExists, err := us.userStore.UserExistsByEmail(u.Email)
+	userExists, err := us.userStore.FindConflicts(&u.Email, &u.Username)
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,
 			Message: apperrors.ErrInternalServerErrorMessage,
 		}
 	}
-	if emailExists {
-		return nil, &apperrors.ServiceError{
-			Type:    apperrors.CONFLICT,
-			Message: apperrors.UserAlreadyExists,
+	if userExists != nil {
+		if userExists.Email == u.Email {
+			return nil, &apperrors.ServiceError{
+				Type: apperrors.CONFLICT,
+				Message: apperrors.EmailAlreadyExists,
+			}
+		}
+		if userExists.Username == u.Username {
+			return nil, &apperrors.ServiceError{
+				Type: apperrors.CONFLICT,
+				Message: apperrors.UsernameAlreadyExists,
+			}
 		}
 	}
 	passwordhashed, err := us.secure.PasswordHash(u.Password)
@@ -92,6 +101,67 @@ func (us *UserService) CreateUser(u CreateUserDto) (*CreateUserResponseDto, erro
 			Email:     user.Email,
 			Username:  user.Username,
 			CreatedAt: user.CreatedAt,
+		},
+	}, nil
+}
+
+func (us *UserService) UpdateUserEmail(id string, eu EmailUpdateDto) (*EmailUpdateResponseDto, error) {
+	if eu.Email == "" {
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.VALIDATION,
+			Message: apperrors.EmailRequired,
+		}
+	}
+	getUser, err := us.userStore.GetUserById(id)
+	if errors.Is(err, apperrors.ErrUserNotFound) {
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.NOT_FOUND,
+			Message: apperrors.ErrUserNotFoundMessage,
+		}
+	}
+	if err != nil {
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.INTERNAL,
+			Message: apperrors.ErrInternalServerErrorMessage,
+		}
+	}
+	if getUser.Email == eu.Email {
+		return nil, & apperrors.ServiceError{
+			Type: apperrors.CONFLICT,
+			Message: apperrors.EmailNotChange,
+		}
+	}
+	emailUsed, err := us.userStore.FindConflicts(&eu.Email, nil)
+	if err != nil {
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.INTERNAL,
+			Message: apperrors.ErrInternalServerErrorMessage,
+		}
+	}
+	if emailUsed != nil {
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.CONFLICT,
+			Message: apperrors.EmailAlreadyExists,
+		}
+	}
+	sendNewData := EmailUpdateResponse{
+		ID: getUser.ID,
+		Email: eu.Email,
+		UpdatedAt: time.Now(),
+	}
+	userUpdate, err := us.userStore.UpdateEmail(sendNewData)
+	if err != nil {
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.INTERNAL,
+			Message: apperrors.ErrInternalServerErrorMessage,
+		}
+	}
+	return &EmailUpdateResponseDto{
+		Message: "Successfuly",
+		Data: EmailUpdateResponse{
+			ID: userUpdate.ID,
+			Email: userUpdate.Email,
+			UpdatedAt: *userUpdate.UpdatedAt,
 		},
 	}, nil
 }
