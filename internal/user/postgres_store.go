@@ -2,6 +2,7 @@ package user
 
 import (
 	"database/sql"
+	"errors"
 	//"github.com/kholeur9/dhaclub-app/internal/apperrors"
 	///"fmt"
 )
@@ -27,10 +28,10 @@ func (pu *PostgresUser) Create(user User) (*User, error) {
 }
 
 func (pu *PostgresUser) UserExistsByEmail(email string) (bool, error) {
-	var exists string
+	var id string
 	row := pu.db.QueryRow(`SELECT id FROM users WHERE email = $1`, email)
-	err := row.Scan(&exists)
-	if err == sql.ErrNoRows {
+	err := row.Scan(&id)
+	if errors.Is(err, sql.ErrNoRows) {
 		return false, nil
 	}
 	if err != nil {
