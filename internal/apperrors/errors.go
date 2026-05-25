@@ -24,7 +24,8 @@ const (
 	UsernameAlreadyExists = "Username already exists"
 
 	ErrUserNotFoundMessage = "User not Found"
-	EmailNotChange = "Email has no chnaged"
+	EmailNotChanged = "Email has not changed"
+	UsernameNotChanged = "Username has not changed"
 )
 
 const (

@@ -69,11 +69,19 @@ func (pu *PostgresUser) GetUserById(id string) (*GetUserResponseDto, error) {
 }
 
 func (pu *PostgresUser) UpdateEmail(dto EmailUpdateResponse) (*User, error) {
-	var newUser User
+	var user User
 	row := pu.db.QueryRow(`UPDATE users SET email = $1, updated_at = $2 WHERE id = $3 RETURNING id, email, updated_at`, dto.Email, dto.UpdatedAt, dto.ID)
-	err := row.Scan(&newUser.ID, &newUser.Email, &newUser.UpdatedAt)
+	err := row.Scan(&user.ID, &user.Email, &user.UpdatedAt)
 	if err != nil {
 		return nil, err
 	}
-	return &newUser, nil
+	return &user, nil
+}
+
+func (pu *PostgresUser) UpdateUsername(dto UsernameUpdateResponse) (*User, error) {
+	var user User
+	if err := pu.db.QueryRow(`UPDATE users SET username = $1, updated_at = $2 WHERE id = $3 RETURNING id, username, updated_at`).Scan(&user.ID, &user.Username, &user.UpdatedAt); err != nil {
+		return nil, err
+	}
+	return &user, nil
 }

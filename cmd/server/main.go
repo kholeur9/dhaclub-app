@@ -38,6 +38,7 @@ func main() {
 	UserHandler := user.NewUserHandler(UserService)
 	router.HandleFunc("POST /user", UserHandler.CreateUserHandler)
 	router.HandleFunc("PATCH /user/{id}", UserHandler.EmailUpdateHandler)
+	router.HandleFunc("PATCH /user/{id}", UserHandler.UsernameUpdateHandler)
 
 	log.Println("Starting server on port", port)
 	err := http.ListenAndServe(port, router)

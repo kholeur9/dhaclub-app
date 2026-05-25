@@ -17,4 +17,5 @@ type UserStore interface {
 	UserExistsByEmail(email string) (bool, error)
 	GetUserById(id string) (*GetUserResponseDto, error)
 	UpdateEmail(dto EmailUpdateResponse) (*User, error)
+	UpdateUsername(dto UsernameUpdateResponse) (*User, error)
 }

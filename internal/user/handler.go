@@ -2,7 +2,7 @@ package user
 
 import (
 	"encoding/json"
-	"fmt"
+	//"fmt"
 	"net/http"
 
 	"github.com/kholeur9/dhaclub-app/internal/response"
@@ -30,16 +30,29 @@ func (uh *UserHandler) CreateUserHandler(w http.ResponseWriter, r *http.Request)
 	response.WriteResponse(w, 201, user)
 }
 
-func (hu *UserHandler) EmailUpdateHandler(w http.ResponseWriter, r *http.Request) {
+func (uh *UserHandler) EmailUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	var emailUpdate EmailUpdateDto
 	if err := json.NewDecoder(r.Body).Decode(&emailUpdate); err != nil {
 		response.HandleServiceError(w, err)
 		return
 	}
-	fmt.Println("id handler:", id)
-	fmt.Println("email handler:", emailUpdate)
-	userUpdated, err := hu.service.UpdateUserEmail(id, emailUpdate)
+	userUpdated, err := uh.service.UpdateUserEmail(id, emailUpdate)
+	if err != nil {
+		response.HandleServiceError(w, err)
+		return
+	}
+	response.WriteResponse(w, 200, userUpdated)
+}
+
+func (uh *UserHandler) UsernameUpdateHandler(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	var usernameUpdate UsernameUpdateDto
+	if err := json.NewDecoder(r.Body).Decode(&usernameUpdate); err != nil {
+		response.HandleServiceError(w, err)
+		return
+	}
+	userUpdated, err := uh.service.UpdateUserUsername(id, usernameUpdate)
 	if err != nil {
 		response.HandleServiceError(w, err)
 		return

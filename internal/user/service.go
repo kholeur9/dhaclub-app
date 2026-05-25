@@ -128,7 +128,7 @@ func (us *UserService) UpdateUserEmail(id string, eu EmailUpdateDto) (*EmailUpda
 	if getUser.Email == eu.Email {
 		return nil, & apperrors.ServiceError{
 			Type: apperrors.CONFLICT,
-			Message: apperrors.EmailNotChange,
+			Message: apperrors.EmailNotChanged,
 		}
 	}
 	emailUsed, err := us.userStore.FindConflicts(&eu.Email, nil)
@@ -161,6 +161,67 @@ func (us *UserService) UpdateUserEmail(id string, eu EmailUpdateDto) (*EmailUpda
 		Data: EmailUpdateResponse{
 			ID: userUpdate.ID,
 			Email: userUpdate.Email,
+			UpdatedAt: *userUpdate.UpdatedAt,
+		},
+	}, nil
+}
+
+func (us *UserService) UpdateUserUsername(id string, un UsernameUpdateDto) (*UsernameUpdateResponseDto, error) {
+	if un.Username == "" {
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.VALIDATION,
+			Message: apperrors.UsernameRequired,
+		}
+	}
+	getUser, err := us.userStore.GetUserById(id)
+	if errors.Is(err, apperrors.ErrUserNotFound) {
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.NOT_FOUND,
+			Message: apperrors.ErrUserNotFoundMessage,
+		}
+	}
+	if err != nil {
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.INTERNAL,
+			Message: apperrors.ErrInternalServerErrorMessage,
+		}
+	}
+	if getUser.Username == un.Username {
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.CONFLICT,
+			Message: apperrors.UsernameNotChanged,
+		}
+	}
+	usernameUsed, err := us.userStore.FindConflicts(nil, &un.Username)
+	if err != nil {
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.INTERNAL,
+			Message: apperrors.ErrInternalServerErrorMessage,
+		}
+	}
+	if usernameUsed != nil {
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.CONFLICT,
+			Message: apperrors.UsernameAlreadyExists,
+		}
+	}
+	sendNewData := UsernameUpdateResponse{
+		ID: getUser.ID,
+		Username: un.Username,
+		UpdatedAt: time.Now(),
+	}
+	userUpdate, err := us.userStore.UpdateUsername(sendNewData)
+	if err != nil {
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.INTERNAL,
+			Message: apperrors.ErrInternalServerErrorMessage,
+		}
+	}
+	return &UsernameUpdateResponseDto{
+		Message: "Successfuly",
+		Data: UsernameUpdateResponse{
+			ID: userUpdate.ID,
+			Username: userUpdate.Username,
 			UpdatedAt: *userUpdate.UpdatedAt,
 		},
 	}, nil
