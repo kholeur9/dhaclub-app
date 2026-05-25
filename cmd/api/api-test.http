@@ -34,5 +34,6 @@ post http://localhost:8080/user
 patch http://localhost:8080/user/b08a1be0-3e6e-42b0-9d5f-ee5361e45b01
 
 {
-    "username": "Tontine G04"
+    //"username": "Tontine G04"
+    //"email": "yannewilfriedm@gmail.com"
 }

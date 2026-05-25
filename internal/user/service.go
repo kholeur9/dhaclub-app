@@ -130,7 +130,9 @@ func (us *UserService) UserUpdate(id string, eu UpdateDto) (*UpdateResponseDto, 
 		ID: id,
 		UpdatedAt: time.Now(),
 	}
+	var count int = 0
 	if eu.Email != nil {
+		count++
 		email := strings.TrimSpace(*eu.Email)
 		if email == "" {
 			return nil, &apperrors.ServiceError{
@@ -160,6 +162,7 @@ func (us *UserService) UserUpdate(id string, eu UpdateDto) (*UpdateResponseDto, 
 		sendNewData.Email = &email
 	}
 	if eu.Username != nil {
+		count++
 		username := strings.TrimSpace(*eu.Username)
 		if username == "" {
 			return nil, &apperrors.ServiceError{
@@ -193,6 +196,12 @@ func (us *UserService) UserUpdate(id string, eu UpdateDto) (*UpdateResponseDto, 
 			}
 		}
 		sendNewData.Username = &username
+	}
+	if count > 1 {
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.VALIDATION,
+			Message: "You can only update one field at a time",
+		}
 	}
 	userUpdate, err := us.userStore.Update(sendNewData)
 	fmt.Println("update err:", err)
