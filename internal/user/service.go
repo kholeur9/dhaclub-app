@@ -123,7 +123,7 @@ func (us *UserService) UserUpdate(id string, eu UpdateDto) (*UpdateResponseDto, 
 	if errors.Is(err, apperrors.ErrUserNotFound) {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.NOT_FOUND,
-			Message: apperrors.ErrUserNotFoundMessage,
+			Message: apperrors.UserNotFoundMessage,
 		}
 	}
 	if err != nil {
