@@ -11,6 +11,7 @@ var (
 	ErrUserNotFound = errors.New("User Not Found")
 
 	ErrManyFieldsToUpdate = errors.New("many fields found")
+	ErrNoFieldsToUpdate = errors.New("no data found")
 )
 
 const (
@@ -30,6 +31,7 @@ const (
 	UsernameNotChanged = "Username has not changed"
 
 	OneFieldToUpdate = "You can only update one field at a time"
+	NoDataToUpdate = "No data to update"
 )
 
 const (

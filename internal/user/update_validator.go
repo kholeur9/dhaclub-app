@@ -10,6 +10,9 @@ func ValidateSingleFieldUpdate(field UpdateDto) error {
 	if field.Username != nil {
 		count++
 	}
+	if count == 0 {
+		return apperrors.ErrNoFieldsToUpdate
+	}
 	if count > 1 {
 		return apperrors.ErrManyFieldsToUpdate
 	}

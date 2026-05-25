@@ -107,17 +107,16 @@ func (us *UserService) CreateUser(u CreateUserDto) (*CreateUserResponseDto, erro
 }
 
 func (us *UserService) UserUpdate(id string, eu UpdateDto) (*UpdateResponseDto, error) {
-	if eu.Email == nil && eu.Username == nil {
-		return nil, &apperrors.ServiceError{
-			Type: apperrors.VALIDATION,
-			Message: "No data to update",
-		}
-	}
 	err := ValidateSingleFieldUpdate(eu)
 	if errors.Is(err, apperrors.ErrManyFieldsToUpdate) {
 		return nil, &apperrors.ServiceError{
 			Type: apperrors.VALIDATION,
 			Message: apperrors.OneFieldToUpdate,
+		}
+	} else if errors.Is(err, apperrors.ErrNoFieldsToUpdate) {
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.VALIDATION,
+			Message: apperrors.NoDataToUpdate,
 		}
 	}
 	getUser, err := us.userStore.GetUserById(id)
