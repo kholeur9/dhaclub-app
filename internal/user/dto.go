@@ -28,30 +28,18 @@ type GetUserResponseDto struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
-type EmailUpdateDto struct {
-	Email string `json:"email"`
+type UpdateDto struct {
+	Email    *string `json:"email"`
+	Username *string `json:"username"`
 }
-type EmailUpdateResponse struct {
+type UpdateResponse struct {
 	ID        string    `json:"id"`
-	Email     string    `json:"email"`
+	Email     *string   `json:"email"`
+	Username  *string   `json:"username"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-type EmailUpdateResponseDto struct {
-	Message string              `json:"message"`
-	Data    EmailUpdateResponse `json:"data"`
-}
-
-type UsernameUpdateDto struct {
-	Username string `json:"username"`
-}
-type UsernameUpdateResponse struct {
-	ID        string    `json:"id"`
-	Username  string    `json:"username"`
-	UpdatedAt time.Time `json:"updated_at"`
-}
-
-type UsernameUpdateResponseDto struct {
-	Message string              `json:"message"`
-	Data    UsernameUpdateResponse `json:"data"`
+type UpdateResponseDto struct {
+	Message string         `json:"message"`
+	Data    UpdateResponse `json:"data"`
 }

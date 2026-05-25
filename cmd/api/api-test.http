@@ -34,5 +34,5 @@ post http://localhost:8080/user
 patch http://localhost:8080/user/c76007ec-b538-4d06-a933-c979a2f95fb9
 
 {
-    "email": "yannewilfriedmoutsiga1@gmail.com"
+    "email": "yannemoutsiga2@gmail.com"
 }

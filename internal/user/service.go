@@ -2,6 +2,7 @@ package user
 
 import (
 	//"fmt"
+	"strings"
 	"time"
 
 	"errors"
@@ -63,13 +64,13 @@ func (us *UserService) CreateUser(u CreateUserDto) (*CreateUserResponseDto, erro
 	if userExists != nil {
 		if userExists.Email == u.Email {
 			return nil, &apperrors.ServiceError{
-				Type: apperrors.CONFLICT,
+				Type:    apperrors.CONFLICT,
 				Message: apperrors.EmailAlreadyExists,
 			}
 		}
 		if userExists.Username == u.Username {
 			return nil, &apperrors.ServiceError{
-				Type: apperrors.CONFLICT,
+				Type:    apperrors.CONFLICT,
 				Message: apperrors.UsernameAlreadyExists,
 			}
 		}
@@ -105,124 +106,119 @@ func (us *UserService) CreateUser(u CreateUserDto) (*CreateUserResponseDto, erro
 	}, nil
 }
 
-func (us *UserService) UpdateUserEmail(id string, eu EmailUpdateDto) (*EmailUpdateResponseDto, error) {
-	if eu.Email == "" {
-		return nil, &apperrors.ServiceError{
-			Type: apperrors.VALIDATION,
-			Message: apperrors.EmailRequired,
-		}
-	}
+func (us *UserService) UserUpdate(id string, eu UpdateDto) (*UpdateResponseDto, error) {
+	var sendNewData, data UpdateResponse
 	getUser, err := us.userStore.GetUserById(id)
 	if errors.Is(err, apperrors.ErrUserNotFound) {
 		return nil, &apperrors.ServiceError{
-			Type: apperrors.NOT_FOUND,
+			Type:    apperrors.NOT_FOUND,
 			Message: apperrors.ErrUserNotFoundMessage,
 		}
 	}
 	if err != nil {
 		return nil, &apperrors.ServiceError{
-			Type: apperrors.INTERNAL,
+			Type:    apperrors.INTERNAL,
 			Message: apperrors.ErrInternalServerErrorMessage,
 		}
 	}
-	if getUser.Email == eu.Email {
-		return nil, & apperrors.ServiceError{
-			Type: apperrors.CONFLICT,
-			Message: apperrors.EmailNotChanged,
+	if eu.Email != nil {
+		email := strings.TrimSpace(*eu.Email)
+		if email == "" {
+			return nil, &apperrors.ServiceError{
+				Type:    apperrors.VALIDATION,
+				Message: apperrors.EmailRequired,
+			}
 		}
-	}
-	emailUsed, err := us.userStore.FindConflicts(&eu.Email, nil)
-	if err != nil {
-		return nil, &apperrors.ServiceError{
-			Type: apperrors.INTERNAL,
-			Message: apperrors.ErrInternalServerErrorMessage,
+		if getUser.Email == email {
+			return nil, &apperrors.ServiceError{
+				Type:    apperrors.CONFLICT,
+				Message: apperrors.EmailNotChanged,
+			}
 		}
-	}
-	if emailUsed != nil {
-		return nil, &apperrors.ServiceError{
-			Type: apperrors.CONFLICT,
-			Message: apperrors.EmailAlreadyExists,
+		emailUsed, err := us.userStore.FindConflicts(&email, nil)
+		if err != nil {
+			return nil, &apperrors.ServiceError{
+				Type:    apperrors.INTERNAL,
+				Message: apperrors.ErrInternalServerErrorMessage,
+			}
 		}
-	}
-	sendNewData := EmailUpdateResponse{
-		ID: getUser.ID,
-		Email: eu.Email,
-		UpdatedAt: time.Now(),
-	}
-	userUpdate, err := us.userStore.UpdateEmail(sendNewData)
-	if err != nil {
-		return nil, &apperrors.ServiceError{
-			Type: apperrors.INTERNAL,
-			Message: apperrors.ErrInternalServerErrorMessage,
+		if emailUsed != nil {
+			return nil, &apperrors.ServiceError{
+				Type:    apperrors.CONFLICT,
+				Message: apperrors.EmailAlreadyExists,
+			}
 		}
-	}
-	return &EmailUpdateResponseDto{
-		Message: "Successfuly",
-		Data: EmailUpdateResponse{
-			ID: userUpdate.ID,
-			Email: userUpdate.Email,
+		sendNewData = UpdateResponse{
+			ID:        getUser.ID,
+			Email:     &email,
+			UpdatedAt: time.Now(),
+		}
+		userUpdate, err := us.userStore.Update(sendNewData)
+		if err != nil {
+			return nil, &apperrors.ServiceError{
+				Type:    apperrors.INTERNAL,
+				Message: apperrors.ErrInternalServerErrorMessage,
+			}
+		}
+		data = UpdateResponse{
+			ID:        userUpdate.ID,
+			Email:     &userUpdate.Email,
 			UpdatedAt: *userUpdate.UpdatedAt,
-		},
-	}, nil
-}
-
-func (us *UserService) UpdateUserUsername(id string, un UsernameUpdateDto) (*UsernameUpdateResponseDto, error) {
-	if un.Username == "" {
-		return nil, &apperrors.ServiceError{
-			Type: apperrors.VALIDATION,
-			Message: apperrors.UsernameRequired,
 		}
 	}
-	getUser, err := us.userStore.GetUserById(id)
-	if errors.Is(err, apperrors.ErrUserNotFound) {
-		return nil, &apperrors.ServiceError{
-			Type: apperrors.NOT_FOUND,
-			Message: apperrors.ErrUserNotFoundMessage,
+	if eu.Username != nil {
+		username := strings.TrimSpace(*eu.Username)
+		if username == "" {
+			return nil, &apperrors.ServiceError{
+				Type:    apperrors.VALIDATION,
+				Message: apperrors.UsernameRequired,
+			}
 		}
-	}
-	if err != nil {
-		return nil, &apperrors.ServiceError{
-			Type: apperrors.INTERNAL,
-			Message: apperrors.ErrInternalServerErrorMessage,
+		if len(username) <= 1 {
+			return nil, &apperrors.ServiceError{
+				Type:    apperrors.VALIDATION,
+				Message: apperrors.UsernameShort,
+			}
 		}
-	}
-	if getUser.Username == un.Username {
-		return nil, &apperrors.ServiceError{
-			Type: apperrors.CONFLICT,
-			Message: apperrors.UsernameNotChanged,
+		if getUser.Email == username {
+			return nil, &apperrors.ServiceError{
+				Type:    apperrors.CONFLICT,
+				Message: apperrors.UsernameNotChanged,
+			}
 		}
-	}
-	usernameUsed, err := us.userStore.FindConflicts(nil, &un.Username)
-	if err != nil {
-		return nil, &apperrors.ServiceError{
-			Type: apperrors.INTERNAL,
-			Message: apperrors.ErrInternalServerErrorMessage,
+		usernameUsed, err := us.userStore.FindConflicts(nil, &username)
+		if err != nil {
+			return nil, &apperrors.ServiceError{
+				Type:    apperrors.INTERNAL,
+				Message: apperrors.ErrInternalServerErrorMessage,
+			}
 		}
-	}
-	if usernameUsed != nil {
-		return nil, &apperrors.ServiceError{
-			Type: apperrors.CONFLICT,
-			Message: apperrors.UsernameAlreadyExists,
+		if usernameUsed != nil {
+			return nil, &apperrors.ServiceError{
+				Type:    apperrors.CONFLICT,
+				Message: apperrors.UsernameAlreadyExists,
+			}
 		}
-	}
-	sendNewData := UsernameUpdateResponse{
-		ID: getUser.ID,
-		Username: un.Username,
-		UpdatedAt: time.Now(),
-	}
-	userUpdate, err := us.userStore.UpdateUsername(sendNewData)
-	if err != nil {
-		return nil, &apperrors.ServiceError{
-			Type: apperrors.INTERNAL,
-			Message: apperrors.ErrInternalServerErrorMessage,
+		sendNewData = UpdateResponse{
+			ID:        getUser.ID,
+			Email:     &username,
+			UpdatedAt: time.Now(),
 		}
-	}
-	return &UsernameUpdateResponseDto{
-		Message: "Successfuly",
-		Data: UsernameUpdateResponse{
-			ID: userUpdate.ID,
-			Username: userUpdate.Username,
+		userUpdate, err := us.userStore.Update(sendNewData)
+		if err != nil {
+			return nil, &apperrors.ServiceError{
+				Type:    apperrors.INTERNAL,
+				Message: apperrors.ErrInternalServerErrorMessage,
+			}
+		}
+		data = UpdateResponse{
+			ID:        userUpdate.ID,
+			Username:  &userUpdate.Username,
 			UpdatedAt: *userUpdate.UpdatedAt,
-		},
+		}
+	}
+	return &UpdateResponseDto{
+		Message: "Successfuly",
+		Data:    data,
 	}, nil
 }

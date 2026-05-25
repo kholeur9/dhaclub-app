@@ -37,8 +37,7 @@ func main() {
 	UserService := user.NewUserService(UserStore, Secure)
 	UserHandler := user.NewUserHandler(UserService)
 	router.HandleFunc("POST /user", UserHandler.CreateUserHandler)
-	router.HandleFunc("PATCH /user/{id}", UserHandler.EmailUpdateHandler)
-	router.HandleFunc("PATCH /user/{id}", UserHandler.UsernameUpdateHandler)
+	router.HandleFunc("PATCH /user/{id}", UserHandler.UserUpdateHandler)
 
 	log.Println("Starting server on port", port)
 	err := http.ListenAndServe(port, router)

@@ -16,6 +16,5 @@ type UserStore interface {
 	FindConflicts(email, username *string) (*User, error)
 	UserExistsByEmail(email string) (bool, error)
 	GetUserById(id string) (*GetUserResponseDto, error)
-	UpdateEmail(dto EmailUpdateResponse) (*User, error)
-	UpdateUsername(dto UsernameUpdateResponse) (*User, error)
+	Update(dto UpdateResponse) (*User, error)
 }
