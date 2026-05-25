@@ -12,6 +12,8 @@ const (
 	PasswordShort        = "Password must be at least 8 characters"
 	EmailAlreadyExists   = "Email already exists"
 	UsernameAlreadyExists = "Username already exists"
+ OneFieldToUpdate = "You can only update one field at a time"
+ NoDataToUpdate   = "No data to update"
 )
 
 // TODO
