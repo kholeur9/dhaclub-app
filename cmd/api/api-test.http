@@ -26,13 +26,13 @@ post http://localhost:8080/user
 
 {
     "email": "yannemoutsiga@gmail.com",
-    "username": "Tontine G02",
+    "username": "Tontine G05",
     "password": "Vc4yr3af1"
 }
 
 ###
-patch http://localhost:8080/user/c76007ec-b538-4d06-a933-c979a2f95fb9
+patch http://localhost:8080/user/b08a1be0-3e6e-42b0-9d5f-ee5361e45b01
 
 {
-    "username": "Tontine G05"
+    "username": "Tontine G04"
 }
