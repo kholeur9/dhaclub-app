@@ -106,8 +106,8 @@ func (us *UserService) CreateUser(u CreateUserDto) (*CreateUserResponseDto, erro
 	}, nil
 }
 
-func (us *UserService) UserUpdate(id string, eu UpdateDto) (*UpdateResponseDto, error) {
-	err := ValidateSingleFieldUpdate(eu)
+func (us *UserService) UserUpdate(id string, ud UpdateDto) (*UpdateResponseDto, error) {
+	err := ValidateSingleFieldUpdate(ud)
 	if errors.Is(err, apperrors.ErrManyFieldsToUpdate) {
 		return nil, &apperrors.ServiceError{
 			Type: apperrors.VALIDATION,
@@ -136,8 +136,8 @@ func (us *UserService) UserUpdate(id string, eu UpdateDto) (*UpdateResponseDto, 
 		ID: id,
 		UpdatedAt: time.Now(),
 	}
-	if eu.Email != nil {
-		email := strings.TrimSpace(*eu.Email)
+	if ud.Email != nil {
+		email := strings.TrimSpace(*ud.Email)
 		if email == "" {
 			return nil, &apperrors.ServiceError{
 				Type:    apperrors.VALIDATION,
@@ -165,8 +165,8 @@ func (us *UserService) UserUpdate(id string, eu UpdateDto) (*UpdateResponseDto, 
 		}
 		sendNewData.Email = &email
 	}
-	if eu.Username != nil {
-		username := strings.TrimSpace(*eu.Username)
+	if ud.Username != nil {
+		username := strings.TrimSpace(*ud.Username)
 		if username == "" {
 			return nil, &apperrors.ServiceError{
 				Type:    apperrors.VALIDATION,
