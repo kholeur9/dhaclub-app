@@ -107,7 +107,7 @@ func (us *UserService) CreateUser(u CreateUserDto) (*CreateUserResponseDto, erro
 }
 
 func (us *UserService) UserUpdate(id string, eu UpdateDto) (*UpdateResponseDto, error) {
-	var sendNewData, data UpdateResponse
+	var sendNewData UpdateResponse
 	getUser, err := us.userStore.GetUserById(id)
 	if errors.Is(err, apperrors.ErrUserNotFound) {
 		return nil, &apperrors.ServiceError{
@@ -154,20 +154,6 @@ func (us *UserService) UserUpdate(id string, eu UpdateDto) (*UpdateResponseDto, 
 			Username:  nil,
 			UpdatedAt: time.Now(),
 		}
-		userUpdate, err := us.userStore.Update(sendNewData)
-		fmt.Println("update err:", err)
-		if err != nil {
-			return nil, &apperrors.ServiceError{
-				Type:    apperrors.INTERNAL,
-				Message: apperrors.ErrInternalServerErrorMessage,
-			}
-		}
-		data = UpdateResponse{
-			ID:        userUpdate.ID,
-			Email:     &userUpdate.Email,
-			Username:  &userUpdate.Username,
-			UpdatedAt: *userUpdate.UpdatedAt,
-		}
 	}
 	if eu.Username != nil {
 		username := strings.TrimSpace(*eu.Username)
@@ -183,7 +169,7 @@ func (us *UserService) UserUpdate(id string, eu UpdateDto) (*UpdateResponseDto, 
 				Message: apperrors.UsernameShort,
 			}
 		}
-		if getUser.Email == username {
+		if getUser.Username == username {
 			return nil, &apperrors.ServiceError{
 				Type:    apperrors.CONFLICT,
 				Message: apperrors.UsernameNotChanged,
@@ -208,23 +194,22 @@ func (us *UserService) UserUpdate(id string, eu UpdateDto) (*UpdateResponseDto, 
 			Username:  &username,
 			UpdatedAt: time.Now(),
 		}
-		userUpdate, err := us.userStore.Update(sendNewData)
-		fmt.Println("update err:", err)
-		if err != nil {
-			return nil, &apperrors.ServiceError{
-				Type:    apperrors.INTERNAL,
-				Message: apperrors.ErrInternalServerErrorMessage,
-			}
-		}
-		data = UpdateResponse{
-			ID:        userUpdate.ID,
-			Email:     &userUpdate.Email,
-			Username:  &userUpdate.Username,
-			UpdatedAt: *userUpdate.UpdatedAt,
+	}
+	userUpdate, err := us.userStore.Update(sendNewData)
+	fmt.Println("update err:", err)
+	if err != nil {
+		return nil, &apperrors.ServiceError{
+			Type:    apperrors.INTERNAL,
+			Message: apperrors.ErrInternalServerErrorMessage,
 		}
 	}
 	return &UpdateResponseDto{
 		Message: "Successfuly",
-		Data:    data,
+		Data: UpdateResponse{
+			ID:        userUpdate.ID,
+			Email:     &userUpdate.Email,
+			Username:  &userUpdate.Username,
+			UpdatedAt: *userUpdate.UpdatedAt,
+		},
 	}, nil
 }
