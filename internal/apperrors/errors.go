@@ -2,37 +2,15 @@ package apperrors
 
 import "errors"
 
+/* ================= INTERNAL ERRORS ================= */
+
 var (
-	ErrTodoExists           = errors.New("todo already exists")
-	ErrTodoNotFound         = errors.New("todo not found")
-	ErrTodoTooShort         = errors.New("description too short")
-	ErrDescriptionTodoEmpty = errors.New("must have an description")
-
-	ErrUserNotFound = errors.New("User Not Found")
-
-	ErrManyFieldsToUpdate = errors.New("many fields found")
-	ErrNoFieldsToUpdate = errors.New("no data found")
+	ErrUserNotFound       = errors.New("user not found")
+	ErrManyFieldsToUpdate = errors.New("many fields to update")
+	ErrNoFieldsToUpdate   = errors.New("no fields to update")
 )
 
-const (
-	ErrInternalServerErrorMessage = "Internal server error."
-	ErrTodoNotFoundMessage        = "Todo not found."
-
-	EmailRequired = "Email is required"
-	UsernameRequired = "Username is required"
-	UsernameShort = "Username too short, enter more one caractere."
-	PasswordRequired = "Password is required"
-	PasswordShort = "Password would have 8 caracteres minimum."
-	EmailAlreadyExists = "Email already exists"
-	UsernameAlreadyExists = "Username already exists"
-
-	ErrUserNotFoundMessage = "User not Found"
-	EmailNotChanged = "Email has not changed"
-	UsernameNotChanged = "Username has not changed"
-
-	OneFieldToUpdate = "You can only update one field at a time"
-	NoDataToUpdate = "No data to update"
-)
+/* ================= ERROR TYPES ================= */
 
 const (
 	VALIDATION = "VALIDATION"
@@ -41,11 +19,24 @@ const (
 	NOT_FOUND  = "NOT_FOUND"
 )
 
-type ServiceError struct {
-	Type    string
-	Message string
-}
+/* ================= USER MESSAGES ================= */
 
-func (se *ServiceError) Error() string {
-	return se.Message
-}
+const (
+	ErrInternalServerErrorMessage = "Internal server error"
+	ErrUserNotFoundMessage        = "User not found"
+
+	EmailRequired    = "Email is required"
+	UsernameRequired = "Username is required"
+	UsernameShort    = "Username must be at least 2 characters"
+	PasswordRequired = "Password is required"
+	PasswordShort    = "Password must be at least 8 characters"
+
+	EmailAlreadyExists    = "Email already exists"
+	UsernameAlreadyExists = "Username already exists"
+
+	EmailNotChanged    = "Email has not changed"
+	UsernameNotChanged = "Username has not changed"
+
+	OneFieldToUpdate = "You can only update one field at a time"
+	NoDataToUpdate   = "No data to update"
+)
