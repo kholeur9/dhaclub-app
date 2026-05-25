@@ -12,6 +12,9 @@ const (
 	PasswordShort        = "Password must be at least 8 characters"
 	EmailAlreadyExists   = "Email already exists"
 	UsernameAlreadyExists = "Username already exists"
+ ErrUserNotFoundMessage = "User not found"
+	EmailNotChanged    = "Email has not changed"
+	UsernameNotChanged = "Username has not changed"
  OneFieldToUpdate = "You can only update one field at a time"
  NoDataToUpdate   = "No data to update"
 )
