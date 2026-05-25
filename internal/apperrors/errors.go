@@ -9,6 +9,8 @@ var (
 	ErrDescriptionTodoEmpty = errors.New("must have an description")
 
 	ErrUserNotFound = errors.New("User Not Found")
+
+	ErrManyFieldsToUpdate = errors.New("many fields found")
 )
 
 const (
@@ -26,6 +28,8 @@ const (
 	ErrUserNotFoundMessage = "User not Found"
 	EmailNotChanged = "Email has not changed"
 	UsernameNotChanged = "Username has not changed"
+
+	OneFieldToUpdate = "You can only update one field at a time"
 )
 
 const (
