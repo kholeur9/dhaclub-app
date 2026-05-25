@@ -71,7 +71,7 @@ func (pu *PostgresUser) GetUserById(id string) (*GetUserResponseDto, error) {
 func (pu *PostgresUser) Update(dto UpdateResponse) (*User, error) {
 	var user User
 	// I use COALESCE because i want to change value not null
-	row := pu.db.QueryRow(`UPDATE users SET COALESCE($1, email), COALESCE($2, username), updated_at = $3 WHERE id = $4 RETURNING id, email, updated_at`, dto.Email, dto.Username, dto.UpdatedAt, dto.ID)
+	row := pu.db.QueryRow(`UPDATE users SET email = COALESCE($1, email), username = COALESCE($2, username), updated_at = $3 WHERE id = $4 RETURNING id, email, updated_at`, dto.Email, dto.Username, dto.UpdatedAt, dto.ID)
 	err := row.Scan(&user.ID, &user.Email, &user.UpdatedAt)
 	if err != nil {
 		return nil, err
