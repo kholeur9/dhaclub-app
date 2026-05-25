@@ -165,6 +165,7 @@ func (us *UserService) UserUpdate(id string, eu UpdateDto) (*UpdateResponseDto, 
 		data = UpdateResponse{
 			ID:        userUpdate.ID,
 			Email:     &userUpdate.Email,
+			Username:  &userUpdate.Username,
 			UpdatedAt: *userUpdate.UpdatedAt,
 		}
 	}
@@ -217,6 +218,7 @@ func (us *UserService) UserUpdate(id string, eu UpdateDto) (*UpdateResponseDto, 
 		}
 		data = UpdateResponse{
 			ID:        userUpdate.ID,
+			Email:     &userUpdate.Email,
 			Username:  &userUpdate.Username,
 			UpdatedAt: *userUpdate.UpdatedAt,
 		}
