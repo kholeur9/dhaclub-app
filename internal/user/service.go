@@ -107,7 +107,6 @@ func (us *UserService) CreateUser(u CreateUserDto) (*CreateUserResponseDto, erro
 }
 
 func (us *UserService) UserUpdate(id string, eu UpdateDto) (*UpdateResponseDto, error) {
-	var sendNewData UpdateResponse
 	getUser, err := us.userStore.GetUserById(id)
 	if errors.Is(err, apperrors.ErrUserNotFound) {
 		return nil, &apperrors.ServiceError{
@@ -120,6 +119,10 @@ func (us *UserService) UserUpdate(id string, eu UpdateDto) (*UpdateResponseDto, 
 			Type:    apperrors.INTERNAL,
 			Message: apperrors.ErrInternalServerErrorMessage,
 		}
+	}
+	var sendNewData = UpdateResponse{
+		ID: id,
+		UpdatedAt: time.Now(),
 	}
 	if eu.Email != nil {
 		email := strings.TrimSpace(*eu.Email)
@@ -148,12 +151,7 @@ func (us *UserService) UserUpdate(id string, eu UpdateDto) (*UpdateResponseDto, 
 				Message: apperrors.EmailAlreadyExists,
 			}
 		}
-		sendNewData = UpdateResponse{
-			ID:        getUser.ID,
-			Email:     &email,
-			Username:  nil,
-			UpdatedAt: time.Now(),
-		}
+		sendNewData.Email = &email
 	}
 	if eu.Username != nil {
 		username := strings.TrimSpace(*eu.Username)
@@ -188,12 +186,7 @@ func (us *UserService) UserUpdate(id string, eu UpdateDto) (*UpdateResponseDto, 
 				Message: apperrors.UsernameAlreadyExists,
 			}
 		}
-		sendNewData = UpdateResponse{
-			ID:        getUser.ID,
-			Email:     nil,
-			Username:  &username,
-			UpdatedAt: time.Now(),
-		}
+		sendNewData.Username = &username
 	}
 	userUpdate, err := us.userStore.Update(sendNewData)
 	fmt.Println("update err:", err)
