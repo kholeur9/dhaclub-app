@@ -1,23 +1,20 @@
 package apperrors
 
-/* ================= USER MESSAGES ================= */
+// GENERIC
+const ErrInternalServerErrorMessage = "Internal server error"
 
+// USER
 const (
-	ErrInternalServerErrorMessage = "Internal server error"
-	ErrUserNotFoundMessage        = "User not found"
-
-	EmailRequired    = "Email is required"
-	UsernameRequired = "Username is required"
-	UsernameShort    = "Username must be at least 2 characters"
-	PasswordRequired = "Password is required"
-	PasswordShort    = "Password must be at least 8 characters"
-
-	EmailAlreadyExists    = "Email already exists"
+	EmailRequired        = "Email is required"
+	UsernameRequired     = "Username is required"
+	PasswordRequired     = "Password is required"
+	UsernameShort        = "Username too short"
+	PasswordShort        = "Password must be at least 8 characters"
+	EmailAlreadyExists   = "Email already exists"
 	UsernameAlreadyExists = "Username already exists"
+)
 
-	EmailNotChanged    = "Email has not changed"
-	UsernameNotChanged = "Username has not changed"
-
-	OneFieldToUpdate = "You can only update one field at a time"
-	NoDataToUpdate   = "No data to update"
+// TODO
+const (
+	ErrTodoNotFoundMessage = "Todo not found"
 )
