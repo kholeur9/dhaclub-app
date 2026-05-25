@@ -1,7 +1,7 @@
 package user
 
 import (
-	//"fmt"
+	"fmt"
 	"strings"
 	"time"
 
@@ -151,9 +151,11 @@ func (us *UserService) UserUpdate(id string, eu UpdateDto) (*UpdateResponseDto, 
 		sendNewData = UpdateResponse{
 			ID:        getUser.ID,
 			Email:     &email,
+			Username:  nil,
 			UpdatedAt: time.Now(),
 		}
 		userUpdate, err := us.userStore.Update(sendNewData)
+		fmt.Println("update err:", err)
 		if err != nil {
 			return nil, &apperrors.ServiceError{
 				Type:    apperrors.INTERNAL,
@@ -201,10 +203,12 @@ func (us *UserService) UserUpdate(id string, eu UpdateDto) (*UpdateResponseDto, 
 		}
 		sendNewData = UpdateResponse{
 			ID:        getUser.ID,
-			Email:     &username,
+			Email:     nil,
+			Username:  &username,
 			UpdatedAt: time.Now(),
 		}
 		userUpdate, err := us.userStore.Update(sendNewData)
+		fmt.Println("update err:", err)
 		if err != nil {
 			return nil, &apperrors.ServiceError{
 				Type:    apperrors.INTERNAL,
