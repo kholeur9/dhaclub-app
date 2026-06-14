@@ -4,6 +4,10 @@ import "errors"
 
 // USER
 var (
+	ErrIdentifierEmpty = errors.New("identifer empty")
+	ErrPasswordEmpty = errors.New("password empty")
+	ErrAccountNotActive = errors.New("Account not active")
+	ErrPasswordWrong = errors.New("password wrong")
 	ErrUserNotFound = errors.New("user not found")
 	ErrManyFieldsToUpdate = errors.New("many fields found")
 	ErrNoFieldsToUpdate = errors.New("no data found")

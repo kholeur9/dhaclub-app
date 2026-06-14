@@ -12,6 +12,8 @@ import (
 	"github.com/kholeur9/dhaclub-app/internal/helpers"
 	"github.com/kholeur9/dhaclub-app/internal/todo"
 	"github.com/kholeur9/dhaclub-app/internal/user"
+	auth_service "github.com/kholeur9/dhaclub-app/internal/auth/service"
+	auth_handler "github.com/kholeur9/dhaclub-app/internal/auth/handler"
 )
 
 func main() {
@@ -36,8 +38,14 @@ func main() {
 	Secure := helpers.NewBcryptSecure()
 	UserService := user.NewUserService(UserStore, Secure)
 	UserHandler := user.NewUserHandler(UserService)
-	router.HandleFunc("POST /user", UserHandler.CreateUserHandler)
+	router.HandleFunc("POST /register", UserHandler.CreateUserHandler)
 	router.HandleFunc("PATCH /user/{id}", UserHandler.UserUpdateHandler)
+	router.HandleFunc("PATCH /user/{id}/change-password", UserHandler.UpdatePasswordHandler)
+
+	//
+	AuthService := auth_service.NewAuthService(UserService)
+	AuthHandler := auth_handler.NewAuthHandler(AuthService)
+	router.HandleFunc("POST /login", AuthHandler.LoginUserHandler)
 
 	log.Println("Starting server on port", port)
 	err := http.ListenAndServe(port, router)

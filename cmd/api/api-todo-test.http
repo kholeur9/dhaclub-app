@@ -1,7 +1,7 @@
 post http://localhost:8080/todo
 
 {
-    "description": "1 mai 1995."
+    "description": "8 mai 1995."
 }
 
 ###
@@ -19,21 +19,4 @@ patch http://localhost:8080/todos/f31041a5-ee83-4036-82e8-0916c9701e86
 {
     "description": "8 mai 2026.",
     "is_done": true
-}
-
-###
-post http://localhost:8080/user
-
-{
-    "email": "yannemoutsiga@gmail.com",
-    "username": "Tontine G05",
-    "password": "Vc4yr3af1"
-}
-
-###
-patch http://localhost:8080/user/b08a1be0-3e6e-42b0-9d5f-ee5361e45b01
-
-{
-    //"username": "Tontine G04"
-    //"email": "yannewilfriedm@gmail.com"
 }

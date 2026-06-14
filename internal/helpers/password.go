@@ -4,6 +4,7 @@ import "golang.org/x/crypto/bcrypt"
 
 type PasswordSecure interface {
 	PasswordHash(password string) (string, error)
+	PasswordCompare(passwordHashed, password string) bool
 }
 
 type Bcrypt struct {
@@ -20,4 +21,12 @@ func (b *Bcrypt) PasswordHash(password string) (string, error) {
 		return "", err
 	}
 	return string(passwordHash), nil
+}
+
+func (b *Bcrypt) PasswordCompare(passwordHashed, password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(passwordHashed), []byte(password))
+	if err != nil {
+		return false
+	}
+	return true
 }

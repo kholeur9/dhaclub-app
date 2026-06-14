@@ -1,0 +1,6 @@
+post http://localhost:8080/login
+
+{
+    "identifier": "yannewilfriedm@gmail.com",
+    "password": "Vc4yr3af1"
+}

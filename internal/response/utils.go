@@ -40,6 +40,9 @@ func HandleServiceError(w http.ResponseWriter, err error) {
 		case apperrors.NOT_FOUND:
 			WriteError(w, se.Message, http.StatusNotFound)
 			return
+		case apperrors.UNAUTHORIZED:
+			WriteError(w, se.Message, http.StatusUnauthorized)
+			return
 		default:
 			WriteError(w, se.Message, http.StatusInternalServerError)
 			return

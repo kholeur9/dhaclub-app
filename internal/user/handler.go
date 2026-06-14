@@ -17,7 +17,7 @@ func NewUserHandler(service *UserService) *UserHandler {
 } 
 
 func (uh *UserHandler) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
-	var create CreateUserDto
+	create := CreateUserDto{}
 	if err := json.NewDecoder(r.Body).Decode(&create); err != nil {
 		response.HandleServiceError(w, err)
 		return
@@ -43,4 +43,19 @@ func (uh *UserHandler) UserUpdateHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	response.WriteResponse(w, 200, userUpdated)
+}
+
+func (uh *UserHandler) UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	var updatePasswordDto UpdatePasswordDto
+	if err := json.NewDecoder(r.Body).Decode(&updatePasswordDto); err != nil {
+		response.HandleServiceError(w, err)
+		return
+	}
+	passwordUpdated, err := uh.service.UserUpdatePassword(id, updatePasswordDto)
+	if err != nil {
+		response.HandleServiceError(w, err)
+		return
+	}
+	response.WriteResponse(w, 200, passwordUpdated)
 }

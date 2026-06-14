@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"github.com/kholeur9/dhaclub-app/internal/apperrors"
-	//"github.com/kholeur9/dhaclub-app/internal/apperrors"
 	///"fmt"
 )
 
@@ -27,6 +26,32 @@ func (pu *PostgresUser) Create(user User) (*User, error) {
 		return nil, err
 	}
 	return &userCreated, nil
+}
+
+func (pu *PostgresUser) GetUserByEmail(email string) (*User, error) {
+	var userFound User
+	row := pu.db.QueryRow(`SELECT id, email, username, password, is_active, created_at, updated_at FROM users WHERE email = $1`, email)
+	err := row.Scan(&userFound.ID, &userFound.Email, &userFound.Username, &userFound.Password, &userFound.IsActive, &userFound.CreatedAt, &userFound.UpdatedAt)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, apperrors.ErrUserNotFound
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &userFound, nil
+}
+
+func (pu *PostgresUser) GetUserByUsername(username string) (*User, error) {
+	var userFound User
+	row := pu.db.QueryRow(`SELECT id, email, username, password, is_active, created_at, updated_at FROM users WHERE username = $1`, username)
+	err := row.Scan(&userFound.ID, &userFound.Email, &userFound.Username, &userFound.Password, &userFound.IsActive, &userFound.CreatedAt, &userFound.UpdatedAt)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, apperrors.ErrUserNotFound
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &userFound, nil
 }
 
 func (pu *PostgresUser) FindConflicts(email, username *string) (*User, error) {

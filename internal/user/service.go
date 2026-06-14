@@ -26,35 +26,38 @@ func NewUserService(userStore UserStore, secure helpers.PasswordSecure) *UserSer
 
 func (us *UserService) CreateUser(u CreateUserDto) (*CreateUserResponseDto, error) {
 	//var newUser User
-	if u.Email == "" {
+	email := strings.TrimSpace(u.Email)
+	username := strings.TrimSpace(u.Username)
+	password := strings.TrimSpace(u.Password)
+	if email == "" {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.VALIDATION,
 			Message: apperrors.EmailRequired,
 		}
 	}
-	if u.Username == "" {
+	if username == "" {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.VALIDATION,
 			Message: apperrors.UsernameRequired,
 		}
-	} else if len(u.Username) <= 1 {
+	} else if len(username) <= 1 {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.VALIDATION,
 			Message: apperrors.UsernameShort,
 		}
 	}
-	if u.Password == "" {
+	if password == "" {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.VALIDATION,
 			Message: apperrors.PasswordRequired,
 		}
-	} else if len(u.Password) < 8 {
+	} else if len(password) < 8 {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.VALIDATION,
 			Message: apperrors.PasswordShort,
 		}
 	}
-	userExists, err := us.userStore.FindConflicts(&u.Email, &u.Username)
+	userExists, err := us.userStore.FindConflicts(&email, &username)
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,
@@ -62,20 +65,20 @@ func (us *UserService) CreateUser(u CreateUserDto) (*CreateUserResponseDto, erro
 		}
 	}
 	if userExists != nil {
-		if userExists.Email == u.Email {
+		if userExists.Email == email {
 			return nil, &apperrors.ServiceError{
 				Type:    apperrors.CONFLICT,
 				Message: apperrors.EmailAlreadyExists,
 			}
 		}
-		if userExists.Username == u.Username {
+		if userExists.Username == username {
 			return nil, &apperrors.ServiceError{
 				Type:    apperrors.CONFLICT,
 				Message: apperrors.UsernameAlreadyExists,
 			}
 		}
 	}
-	passwordhashed, err := us.secure.PasswordHash(u.Password)
+	passwordhashed, err := us.secure.PasswordHash(password)
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,
@@ -84,8 +87,8 @@ func (us *UserService) CreateUser(u CreateUserDto) (*CreateUserResponseDto, erro
 	}
 	newUser := User{
 		ID:       uuid.New().String(),
-		Email:    u.Email,
-		Username: u.Username,
+		Email:    email,
+		Username: username,
 		Password: passwordhashed,
 	}
 	user, err := us.userStore.Create(newUser)
@@ -104,6 +107,33 @@ func (us *UserService) CreateUser(u CreateUserDto) (*CreateUserResponseDto, erro
 			CreatedAt: user.CreatedAt,
 		},
 	}, nil
+}
+
+func (us *UserService) Authenticate(identifier, password string) (*User, error) {
+	if identifier == "" {
+		return nil, apperrors.ErrIdentifierEmpty
+	}
+	if password == "" {
+		return nil, apperrors.ErrPasswordEmpty
+	}
+	var user *User
+	var err error
+	if strings.Contains(identifier, "@") {
+		user, err = us.userStore.GetUserByEmail(identifier)
+	} else {
+		user, err = us.userStore.GetUserByUsername(identifier)
+	}
+	if err != nil {
+		return nil, err
+	}
+	if !user.IsActive {
+		return nil, apperrors.ErrAccountNotActive
+	}
+	passwordMatch := us.secure.PasswordCompare(user.Password, password)
+	if !passwordMatch {
+		return nil, apperrors.ErrPasswordWrong
+	}
+	return user, err
 }
 
 func (us *UserService) UserUpdate(id string, ud UpdateDto) (*UpdateResponseDto, error) {
@@ -217,4 +247,8 @@ func (us *UserService) UserUpdate(id string, ud UpdateDto) (*UpdateResponseDto, 
 			UpdatedAt: *userUpdate.UpdatedAt,
 		},
 	}, nil
+}
+
+func (us *UserService) UserUpdatePassword(id string, password UpdatePasswordDto) (*UpdatePasswordResponse, error) {
+	return &UpdatePasswordResponse{}, nil
 }
