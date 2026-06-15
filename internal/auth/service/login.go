@@ -10,7 +10,7 @@ import (
 )
 
 type AuthService struct {
-	userService user.UserService
+	userService *user.UserService
 }
 
 func NewAuthService(userService *user.UserService) *AuthService{
@@ -42,16 +42,16 @@ func (as *AuthService) LoginUser(lu user.LoginUserDto) (*user.LoginUserResponse,
 			Message: apperrors.InvalidCredentials,
 		}
 	}
-	if err != nil {
-		return nil, &apperrors.ServiceError{
-			Type:    apperrors.INTERNAL,
-			Message: apperrors.ErrInternalServerErrorMessage,
-		}
-	}
 	if errors.Is(err, apperrors.ErrAccountNotActive) {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.UNAUTHORIZED,
 			Message: apperrors.AccountNotActive,
+		}
+	}
+	if err != nil {
+		return nil, &apperrors.ServiceError{
+			Type:    apperrors.INTERNAL,
+			Message: apperrors.ErrInternalServerErrorMessage,
 		}
 	}
 	return &user.LoginUserResponse{
