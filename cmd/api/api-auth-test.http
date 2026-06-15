@@ -2,6 +2,6 @@
 post http://localhost:8080/login
 
 {
-    "identifier": "Tontine G100",
+    "identifier": "yannemoutsiga@gmail.com",
     "password": "Vc4yr3af1"
 }

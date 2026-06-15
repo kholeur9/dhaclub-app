@@ -6,16 +6,19 @@ import (
 	"strings"
 
 	"github.com/kholeur9/dhaclub-app/internal/apperrors"
+	"github.com/kholeur9/dhaclub-app/internal/auth/jwt"
 	"github.com/kholeur9/dhaclub-app/internal/user"
 )
 
 type AuthService struct {
 	userService *user.UserService
+	jwtService jwt.JWTService
 }
 
-func NewAuthService(userService *user.UserService) *AuthService{
+func NewAuthService(userService *user.UserService, jwtService jwt.JWTService) *AuthService{
 	return &AuthService{
 		userService: userService,
+		jwtService: jwtService,
 	}
 }
 
@@ -54,8 +57,16 @@ func (as *AuthService) LoginUser(lu user.LoginUserDto) (*user.LoginUserResponse,
 			Message: apperrors.ErrInternalServerErrorMessage,
 		}
 	}
+	access_token, err := as.jwtService.GenerateToken(userFound.ID)
+	if err != nil {
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.INTERNAL,
+			Message: apperrors.ErrInternalServerErrorMessage,
+		}
+	}
 	return &user.LoginUserResponse{
 		Message: "Successfuly",
+		AccessToken: access_token,
 		Data: user.LoginResponse{
 			ID:        userFound.ID,
 			Email:     userFound.Email,

@@ -29,14 +29,15 @@ type LoginResponse struct {
 	ID        string     `json:"id"`
 	Email     string     `json:"email"`
 	Username  string     `json:"username"`
-	IsActive  bool		 `json:"is_active"`
+	IsActive  bool       `json:"is_active"`
 	CreatedAt time.Time  `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 type LoginUserResponse struct {
-	Message string `json:"message"`
-	Data LoginResponse `json:"data"`
+	Message     string        `json:"message"`
+	AccessToken string        `json:"access_token"`
+	Data        LoginResponse `json:"data"`
 }
 
 type GetUserResponseDto struct {

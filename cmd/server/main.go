@@ -6,20 +6,23 @@ import (
 	//"context"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/joho/godotenv"
+	auth_handler "github.com/kholeur9/dhaclub-app/internal/auth/handler"
+	"github.com/kholeur9/dhaclub-app/internal/auth/jwt"
+	auth_service "github.com/kholeur9/dhaclub-app/internal/auth/service"
 	"github.com/kholeur9/dhaclub-app/internal/db"
 	"github.com/kholeur9/dhaclub-app/internal/helpers"
 	"github.com/kholeur9/dhaclub-app/internal/todo"
 	"github.com/kholeur9/dhaclub-app/internal/user"
-	auth_service "github.com/kholeur9/dhaclub-app/internal/auth/service"
-	auth_handler "github.com/kholeur9/dhaclub-app/internal/auth/handler"
 )
 
 func main() {
 	godotenv.Load()
 	port := ":8080"
 	pg := db.Connect()
+	jwtKey := os.Getenv("JWT_SECRET")
 
 	router := http.NewServeMux()
 
@@ -43,7 +46,8 @@ func main() {
 	router.HandleFunc("PATCH /user/{id}/change-password", UserHandler.UpdatePasswordHandler)
 
 	//
-	AuthService := auth_service.NewAuthService(UserService)
+	JwtService := jwt.NewJwtService(jwtKey)
+	AuthService := auth_service.NewAuthService(UserService, JwtService)
 	AuthHandler := auth_handler.NewAuthHandler(AuthService)
 	router.HandleFunc("POST /login", AuthHandler.LoginUserHandler)
 
