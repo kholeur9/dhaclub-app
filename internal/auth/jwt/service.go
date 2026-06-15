@@ -1,6 +1,7 @@
 package jwt
 
 import (
+	"errors"
 	"time"
 	//"fmt"
 	"github.com/golang-jwt/jwt/v5"
@@ -32,4 +33,19 @@ func (jws *jwtService) GenerateToken(userID string) (string, error) {
 		return "", err
 	}
 	return token, nil
+}
+
+func (jws *jwtService) ValidateToken(token string) (*Claims, error) {
+	var valideClaims *Claims
+	tokenString, err := jwt.ParseWithClaims(token, &Claims{}, func(t *jwt.Token) (any, error) {
+		return []byte(token), nil
+	})
+	if err != nil {
+		return nil, err
+	} else if claims, ok := tokenString.Claims.(*Claims); ok {
+		valideClaims = claims
+	} else {
+		return nil, errors.New("Claims unknown, do not proceed")
+	}
+	return valideClaims, nil
 }
