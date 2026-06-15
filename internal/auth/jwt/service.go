@@ -36,16 +36,14 @@ func (jws *jwtService) GenerateToken(userID string) (string, error) {
 }
 
 func (jws *jwtService) ValidateToken(token string) (*Claims, error) {
-	var valideClaims *Claims
-	tokenString, err := jwt.ParseWithClaims(token, &Claims{}, func(t *jwt.Token) (any, error) {
-		return []byte(token), nil
+	tokenVerified, err := jwt.ParseWithClaims(token, &Claims{}, func(t *jwt.Token) (any, error) {
+		return []byte(jws.key), nil
 	})
 	if err != nil {
 		return nil, err
-	} else if claims, ok := tokenString.Claims.(*Claims); ok {
-		valideClaims = claims
+	} else if claims, ok := tokenVerified.Claims.(*Claims); ok {
+		return claims, nil
 	} else {
 		return nil, errors.New("Claims unknown, do not proceed")
 	}
-	return valideClaims, nil
 }
