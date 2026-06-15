@@ -4,13 +4,19 @@ import "errors"
 
 // USER
 var (
-	ErrIdentifierEmpty = errors.New("identifer empty")
-	ErrPasswordEmpty = errors.New("password empty")
+	ErrIdentifierEmpty = errors.New("Identifer empty")
+	ErrPasswordEmpty = errors.New("Password empty")
 	ErrAccountNotActive = errors.New("Account not active")
-	ErrPasswordWrong = errors.New("password wrong")
-	ErrUserNotFound = errors.New("user not found")
-	ErrManyFieldsToUpdate = errors.New("many fields found")
-	ErrNoFieldsToUpdate = errors.New("no data found")
+	ErrPasswordWrong = errors.New("Password wrong")
+	ErrUserNotFound = errors.New("User not found")
+	ErrManyFieldsToUpdate = errors.New("Many fields found")
+	ErrNoFieldsToUpdate = errors.New("No data found")
+
+)
+// JWT
+var (
+	ErrInvalidToken = errors.New("Invcalid token")
+	ErrClaimsUnknown = errors.New("Unknown cleams type")
 )
 
 // TODO

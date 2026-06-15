@@ -1,10 +1,11 @@
 package jwt
 
 import (
-	"errors"
 	"time"
+
 	//"fmt"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/kholeur9/dhaclub-app/internal/apperrors"
 )
 
 type jwtService struct {
@@ -39,11 +40,14 @@ func (jws *jwtService) ValidateToken(token string) (*Claims, error) {
 	tokenVerified, err := jwt.ParseWithClaims(token, &Claims{}, func(t *jwt.Token) (any, error) {
 		return []byte(jws.key), nil
 	})
+	if !tokenVerified.Valid {
+		return nil, apperrors.ErrInvalidToken
+	}
 	if err != nil {
 		return nil, err
 	} else if claims, ok := tokenVerified.Claims.(*Claims); ok {
 		return claims, nil
 	} else {
-		return nil, errors.New("Claims unknown, do not proceed")
+		return nil, apperrors.ErrClaimsUnknown
 	}
 }
