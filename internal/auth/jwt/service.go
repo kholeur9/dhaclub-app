@@ -40,12 +40,13 @@ func (jws *jwtService) ValidateToken(token string) (*Claims, error) {
 	tokenVerified, err := jwt.ParseWithClaims(token, &Claims{}, func(t *jwt.Token) (any, error) {
 		return []byte(jws.key), nil
 	})
+	if err != nil {
+		return nil, err
+	}
 	if !tokenVerified.Valid {
 		return nil, apperrors.ErrInvalidToken
 	}
-	if err != nil {
-		return nil, err
-	} else if claims, ok := tokenVerified.Claims.(*Claims); ok {
+	if claims, ok := tokenVerified.Claims.(*Claims); ok {
 		return claims, nil
 	} else {
 		return nil, apperrors.ErrClaimsUnknown
