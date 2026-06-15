@@ -17,7 +17,7 @@ func NewJwtService(key string) *jwtService {
 }
 
 func (jws *jwtService) GenerateToken(userID string) (string, error) {
-	SigningKey := jws.key
+	SigningKey := []byte(jws.key)
 	claims := Claims{
 		userID,
 		jwt.RegisteredClaims{

@@ -23,6 +23,9 @@ func main() {
 	port := ":8080"
 	pg := db.Connect()
 	jwtKey := os.Getenv("JWT_SECRET")
+	if jwtKey == "" {
+		log.Fatal("JWT_SECRET is missing")
+	}
 
 	router := http.NewServeMux()
 
