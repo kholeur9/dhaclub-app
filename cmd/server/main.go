@@ -47,8 +47,9 @@ func main() {
 	router.HandleFunc("POST /register", UserHandler.CreateUserHandler)
 	router.HandleFunc("PATCH /user/{id}", UserHandler.UserUpdateHandler)
 	router.HandleFunc("PATCH /user/{id}/change-password", UserHandler.UpdatePasswordHandler)
+	router.Handle("GET /me", jwt.AuthMiddleware(UserHandler.GetMeHandler))
 
-	//
+	//JWT
 	JwtService := jwt.NewJwtService(jwtKey)
 	AuthService := auth_service.NewAuthService(UserService, JwtService)
 	AuthHandler := auth_handler.NewAuthHandler(AuthService)

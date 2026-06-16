@@ -59,3 +59,6 @@ func (uh *UserHandler) UpdatePasswordHandler(w http.ResponseWriter, r *http.Requ
 	}
 	response.WriteResponse(w, 200, passwordUpdated)
 }
+
+func (uh *UserHandler) GetMeHandler(w http.ResponseWriter, r *http.Request) {
+}
