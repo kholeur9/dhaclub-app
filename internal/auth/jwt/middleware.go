@@ -1,9 +1,44 @@
 package jwt
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+	"strings"
+	"context"
+)
 
-func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+type MiddlewareService struct {
+	jwtService *JwtService
+}
+
+func NewAuthMiddlewareService(jwt *JwtService) *MiddlewareService{
+	return &MiddlewareService{jwt}
+}
+
+func (ams *MiddlewareService) AuthMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		token := r.Header.Get("Authorization")
+		if token == "" {
+			http.Error(w, "missing authorization header", http.StatusUnauthorized)
+			return
+		}
+		verify := strings.Split(token, " ")
+		fmt.Println(verify)
+		if len(verify) < 1 {
+			http.Error(w, "Empty authorization", http.StatusUnauthorized)
+			return
+		}
+		if verify[0] != "Bearer" {
+			http.Error(w, "Missing bearer", http.StatusUnauthorized)
+			return
+		}
+		tokenHeader := verify[1]
+		claims, err := ams.jwtService.ValidateToken(tokenHeader)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnauthorized)
+			return
+		}
+		
 		next.ServeHTTP(w, r)
-	}
+	})
 }

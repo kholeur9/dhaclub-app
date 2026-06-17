@@ -47,13 +47,14 @@ func main() {
 	router.HandleFunc("POST /register", UserHandler.CreateUserHandler)
 	router.HandleFunc("PATCH /user/{id}", UserHandler.UserUpdateHandler)
 	router.HandleFunc("PATCH /user/{id}/change-password", UserHandler.UpdatePasswordHandler)
-	router.Handle("GET /me", jwt.AuthMiddleware(UserHandler.GetMeHandler))
 
 	//JWT
 	JwtService := jwt.NewJwtService(jwtKey)
+	Middleware := jwt.NewAuthMiddlewareService(JwtService)
 	AuthService := auth_service.NewAuthService(UserService, JwtService)
 	AuthHandler := auth_handler.NewAuthHandler(AuthService)
 	router.HandleFunc("POST /login", AuthHandler.LoginUserHandler)
+	router.Handle("GET /me", Middleware.AuthMiddleware(http.HandlerFunc(UserHandler.GetMeHandler)))
 
 	log.Println("Starting server on port", port)
 	err := http.ListenAndServe(port, router)

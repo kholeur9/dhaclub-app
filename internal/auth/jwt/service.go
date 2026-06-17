@@ -8,17 +8,17 @@ import (
 	"github.com/kholeur9/dhaclub-app/internal/apperrors"
 )
 
-type jwtService struct {
+type JwtService struct {
 	key string
 }
 
-func NewJwtService(key string) *jwtService {
-	return &jwtService{
+func NewJwtService(key string) *JwtService {
+	return &JwtService{
 		key: key,
 	}
 }
 
-func (jws *jwtService) GenerateToken(userID string) (string, error) {
+func (jws *JwtService) GenerateToken(userID string) (string, error) {
 	SigningKey := []byte(jws.key)
 	claims := Claims{
 		userID,
@@ -36,7 +36,7 @@ func (jws *jwtService) GenerateToken(userID string) (string, error) {
 	return token, nil
 }
 
-func (jws *jwtService) ValidateToken(token string) (*Claims, error) {
+func (jws *JwtService) ValidateToken(token string) (*Claims, error) {
 	tokenVerified, err := jwt.ParseWithClaims(token, &Claims{}, func(t *jwt.Token) (any, error) {
 		return []byte(jws.key), nil
 	})

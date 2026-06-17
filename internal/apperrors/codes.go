@@ -15,7 +15,7 @@ var (
 )
 // JWT
 var (
-	ErrInvalidToken = errors.New("Invcalid token")
+	ErrInvalidToken = errors.New("Invalid token")
 	ErrClaimsUnknown = errors.New("Unknown cleams type")
 )
 

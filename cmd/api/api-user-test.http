@@ -8,6 +8,10 @@ post http://localhost:8080/register
 }
 
 ###
+get http://localhost:8080/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiM2U3ZDVlMGQtMzY4YS00MDNmLTlhY2QtMzhiNmZlOWMxMzEyIiwic3ViIjoiM2U3ZDVlMGQtMzY4YS00MDNmLTlhY2QtMzhiNmZlOWMxMzEyIiwiZXhwIjoxNzgxNzI2ODUxLCJpYXQiOjE3ODE2NDA0NTF9.CTZS3CjhzpEq-pKQbrE89lrA5BvMriEYDvtHmMv3eo0
+
+###
 patch http://localhost:8080/user/b08a1be0-3e6e-42b0-9d5f-ee5361e45b01
 
 {
