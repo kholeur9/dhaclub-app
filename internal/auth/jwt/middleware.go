@@ -1,10 +1,12 @@
 package jwt
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
-	"context"
+
+	"github.com/kholeur9/dhaclub-app/internal/shared"
 )
 
 type MiddlewareService struct {
@@ -17,7 +19,6 @@ func NewAuthMiddlewareService(jwt *JwtService) *MiddlewareService{
 
 func (ams *MiddlewareService) AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.Context
 		token := r.Header.Get("Authorization")
 		if token == "" {
 			http.Error(w, "missing authorization header", http.StatusUnauthorized)
@@ -39,7 +40,7 @@ func (ams *MiddlewareService) AuthMiddleware(next http.Handler) http.Handler {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
-		
-		next.ServeHTTP(w, r)
+		ctx := context.WithValue(context.Background(), shared.UserIDKey, claims.Subject)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

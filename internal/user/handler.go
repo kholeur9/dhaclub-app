@@ -2,9 +2,11 @@ package user
 
 import (
 	"encoding/json"
-	//"fmt"
+	"fmt"
+	//"context"
 	"net/http"
 
+	"github.com/kholeur9/dhaclub-app/internal/shared"
 	"github.com/kholeur9/dhaclub-app/internal/response"
 )
 
@@ -61,4 +63,7 @@ func (uh *UserHandler) UpdatePasswordHandler(w http.ResponseWriter, r *http.Requ
 }
 
 func (uh *UserHandler) GetMeHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	userID := ctx.Value(shared.UserIDKey)
+	fmt.Println("Handler:", userID)
 }
