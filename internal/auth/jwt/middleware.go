@@ -26,7 +26,7 @@ func (ams *MiddlewareService) AuthMiddleware(next http.Handler) http.Handler {
 		}
 		verify := strings.Split(token, " ")
 		fmt.Println(verify)
-		if len(verify) < 1 {
+		if len(verify) < 2 {
 			http.Error(w, "Empty authorization", http.StatusUnauthorized)
 			return
 		}
@@ -35,12 +35,15 @@ func (ams *MiddlewareService) AuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 		tokenHeader := verify[1]
+		if tokenHeader == "" {
+			http.Error(w, "Missing Token in authorization", http.StatusUnauthorized)
+		}
 		claims, err := ams.jwtService.ValidateToken(tokenHeader)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
-		ctx := context.WithValue(context.Background(), shared.UserIDKey, claims.Subject)
+		ctx := context.WithValue(r.Context(), shared.UserIDKey, claims.Subject)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
