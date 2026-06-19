@@ -29,24 +29,12 @@ func main() {
 
 	router := http.NewServeMux()
 
-	TodoStore := todo.NewPostgresTodo(pg)
-	TodoService := todo.NewTodoService(TodoStore)
-	HandlerTodo := todo.NewHandlerTodo(TodoService)
-
-	router.HandleFunc("POST /todo", HandlerTodo.CreateTodoHandler)
-	router.HandleFunc("GET /todos/{id}", HandlerTodo.GetTodoByIDHandler)
-	router.HandleFunc("GET /todos", HandlerTodo.TodosListHandler)
-	router.HandleFunc("DELETE /todos/{id}", HandlerTodo.DeleteTodoHandler)
-	router.HandleFunc("PATCH /todos/{id}", HandlerTodo.UpdateTodoHandler)
-
 	//router.Handle("GET /", http.FileServer(http.Dir("static")))
 	UserStore := user.NewPostgresUser(pg)
 	Secure := helpers.NewBcryptSecure()
 	UserService := user.NewUserService(UserStore, Secure)
 	UserHandler := user.NewUserHandler(UserService)
 	router.HandleFunc("POST /register", UserHandler.CreateUserHandler)
-	router.HandleFunc("PATCH /user/{id}", UserHandler.UserUpdateHandler)
-	router.HandleFunc("PATCH /user/{id}/change-password", UserHandler.UpdatePasswordHandler)
 
 	//JWT
 	JwtService := jwt.NewJwtService(jwtKey)
@@ -54,7 +42,20 @@ func main() {
 	AuthService := auth_service.NewAuthService(UserService, JwtService)
 	AuthHandler := auth_handler.NewAuthHandler(AuthService)
 	router.HandleFunc("POST /login", AuthHandler.LoginUserHandler)
+
 	router.Handle("GET /me", Middleware.AuthMiddleware(http.HandlerFunc(UserHandler.GetMeHandler)))
+	router.Handle("PATCH /user/{id}", Middleware.AuthMiddleware(http.HandlerFunc(UserHandler.UserUpdateHandler)))
+	router.Handle("PATCH /user/{id}/change-password", Middleware.AuthMiddleware(http.HandlerFunc(UserHandler.UpdatePasswordHandler)))
+
+	// Todo User
+	TodoStore := todo.NewPostgresTodo(pg)
+	TodoService := todo.NewTodoService(TodoStore)
+	HandlerTodo := todo.NewHandlerTodo(TodoService)
+	router.Handle("POST /todo", Middleware.AuthMiddleware(http.HandlerFunc(HandlerTodo.CreateTodoHandler)))
+	router.Handle("GET /todos/{id}", Middleware.AuthMiddleware(http.HandlerFunc(HandlerTodo.GetTodoByIDHandler)))
+	router.Handle("GET /todos", Middleware.AuthMiddleware(http.HandlerFunc(HandlerTodo.TodosListHandler)))	
+	router.Handle("DELETE /todos/{id}", Middleware.AuthMiddleware(http.HandlerFunc(HandlerTodo.DeleteTodoHandler)))
+	router.Handle("PATCH /todos/{id}", Middleware.AuthMiddleware(http.HandlerFunc(HandlerTodo.UpdateTodoHandler)))
 
 	log.Println("Starting server on port", port)
 	err := http.ListenAndServe(port, router)
