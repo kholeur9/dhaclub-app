@@ -84,7 +84,23 @@ func (s *HandlerTodo) GetTodoByIDHandler(w http.ResponseWriter, r *http.Request)
 }
 
 func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
-	getAllTodos, err := s.todoService.TodosList()
+	userIDContext := r.Context().Value(shared.UserIDKey)
+	if userIDContext == nil {
+		response.HandleServiceError(w, &apperrors.ServiceError{
+			Type: apperrors.UNAUTHORIZED,
+			Message: apperrors.UserNotAuthticated,
+		})
+		return
+	}
+	userID, ok := userIDContext.(uuid.UUID)
+	if !ok {
+		response.HandleServiceError(w, &apperrors.ServiceError{
+			Type: apperrors.INTERNAL,
+			Message: apperrors.ErrInternalServerErrorMessage,
+		})
+		return
+	}
+	getAllTodos, err := s.todoService.TodosList(userID)
 	if err != nil {
 		response.HandleServiceError(w, err)
 		return

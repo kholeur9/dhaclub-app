@@ -40,8 +40,8 @@ func (pt *PostgresTodo) ExistsByDescription(description string) (bool, error) {
 	return false, err
 }
 
-func (pt *PostgresTodo) TodosList() ([]*Todo, error) {
-	rows, err := pt.db.Query(`SELECT id, description, is_done, created_at, updated_at FROM todos ORDER BY created_at DESC`)
+func (pt *PostgresTodo) TodosList(userID uuid.UUID) ([]*Todo, error) {
+	rows, err := pt.db.Query(`SELECT id, user_id, description, completed, created_at, updated_at FROM todos WHERE user_id = $1 ORDER BY created_at DESC`, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (pt *PostgresTodo) TodosList() ([]*Todo, error) {
 	var todos []*Todo
 	for rows.Next() {
 		todo := new(Todo)
-		if err := rows.Scan(&todo.ID, &todo.Description, &todo.Completed, &todo.CreatedAt, &todo.UpdatedAt); err != nil {
+		if err := rows.Scan(&todo.ID, &todo.UserID, &todo.Description, &todo.Completed, &todo.CreatedAt, &todo.UpdatedAt); err != nil {
 			return nil, err
 		}
 		todos = append(todos, todo)

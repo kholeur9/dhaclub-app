@@ -87,8 +87,8 @@ func (ts *TodoService) GetTodoByID(userID uuid.UUID, todoID string) (*Todo, erro
 	return todo, nil
 }
 
-func (ts *TodoService) TodosList() ([]*Todo, error) {
-	getAllTodos, err := ts.store.TodosList()
+func (ts *TodoService) TodosList(userID uuid.UUID) ([]*Todo, error) {
+	getAllTodos, err := ts.store.TodosList(userID)
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,

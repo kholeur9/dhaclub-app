@@ -2,7 +2,7 @@ post http://localhost:8080/todo
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiVG9udGluZSBHMDMiLCJzdWIiOiJjNzYwMDdlYy1iNTM4LTRkMDYtYTkzMy1jOTc5YTJmOTVmYjkiLCJleHAiOjE3ODIwMjIyODUsImlhdCI6MTc4MTkzNTg4NX0.EUHRRowYVgRM_2Js8vFqIhkME6edA3qgq6DmB62PBR0
 
 {
-    "description": "18 juillet 2025."
+    "description": "18 juillet 2026."
 }
 
 ###
@@ -11,6 +11,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiVG9ud
 
 ###
 get http://localhost:8080/todos
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiVG9udGluZSBHMDUiLCJzdWIiOiIzZTdkNWUwZC0zNjhhLTQwM2YtOWFjZC0zOGI2ZmU5YzEzMTIiLCJleHAiOjE3ODIwMTMzMzEsImlhdCI6MTc4MTkyNjkzMX0.of9APCrtf12ABJz_jYf4elWdlH3hEXuZ31QCjqkbUh0
 
 ###
 delete http://localhost:8080/todos/88f67b3e-5b92-47e0-a7cb-0d274cf57229
