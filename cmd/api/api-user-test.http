@@ -2,7 +2,7 @@
 post http://localhost:8080/register
 
 {
-    "email": "yannemoutsiga@gmail.com",
+    "email": "yannemoutsiga2@gmail.com",
     "username": "Tontine G05",
     "password": "Vc4yr3af1"
 }

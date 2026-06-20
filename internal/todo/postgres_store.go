@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	//"fmt"
 
+	"github.com/google/uuid"
 	"github.com/kholeur9/dhaclub-app/internal/apperrors"
 )
 
@@ -59,11 +60,11 @@ func (pt *PostgresTodo) TodosList() ([]*Todo, error) {
 	return todos, nil
 }
 
-func (pt *PostgresTodo) GetByID(id string) (*Todo, error) {
+func (pt *PostgresTodo) GetByID(userID uuid.UUID, todoID string) (*Todo, error) {
 	var todo Todo
 	row := pt.db.QueryRow(`
-	SELECT id, description, is_done, created_at, updated_at FROM todos WHERE id = $1`, id)
-	err := row.Scan(&todo.ID, &todo.Description, &todo.Completed, &todo.CreatedAt, &todo.UpdatedAt)
+	SELECT id, user_id, description, completed, created_at, updated_at FROM todos WHERE id = $1`, todoID)
+	err := row.Scan(&todo.ID, &todo.UserID, &todo.Description, &todo.Completed, &todo.CreatedAt, &todo.UpdatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, apperrors.ErrTodoNotFound
@@ -92,8 +93,8 @@ func (pt *PostgresTodo) UpdateTodo(dto UpdateFieldDto) (*Todo, error) {
 		if err := row.Scan(&todoUpdated.ID, &todoUpdated.Description, &todoUpdated.Completed, &todoUpdated.CreatedAt, &todoUpdated.UpdatedAt); err != nil {
 			return nil, err
 		}
-	} else if dto.IsDone != nil {
-		row := pt.db.QueryRow(`UPDATE todos SET is_done = $1, updated_at = $2 WHERE id = $3 RETURNING id, description, is_done, created_at, updated_at`, dto.IsDone, dto.UpdatedAt, dto.ID)
+	} else if dto.Completed != nil {
+		row := pt.db.QueryRow(`UPDATE todos SET is_done = $1, updated_at = $2 WHERE id = $3 RETURNING id, description, is_done, created_at, updated_at`, dto.Completed, dto.UpdatedAt, dto.ID)
 		if err := row.Scan(&todoUpdated.ID, &todoUpdated.Description, &todoUpdated.Completed, &todoUpdated.CreatedAt, &todoUpdated.UpdatedAt); err != nil {
 			return nil, err
 		}

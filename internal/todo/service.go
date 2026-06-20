@@ -65,13 +65,13 @@ func (ts *TodoService) CreateTodo(userID uuid.UUID, t CreateTodoDto) (*CreateTod
 			ID:          todo.ID.String(),
 			UserID:		 todo.UserID.String(),
 			Description: todo.Description,
-			Done:        todo.Completed,
+			Completed:   todo.Completed,
 		},
 	}, nil
 }
 
-func (ts *TodoService) GetTodoByID(id string) (*Todo, error) {
-	todo, err := ts.store.GetByID(id)
+func (ts *TodoService) GetTodoByID(userID uuid.UUID, todoID string) (*Todo, error) {
+	todo, err := ts.store.GetByID(userID, todoID)
 	if errors.Is(err, apperrors.ErrTodoNotFound) {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.NOT_FOUND,
@@ -120,7 +120,7 @@ func (ts *TodoService) DeleteTodo(id string) (*DeleteTodoResponse, error) {
 
 func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 	var updateField UpdateFieldDto
-	if t.Description == nil && t.IsDone == nil {
+	if t.Description == nil && t.Completed == nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.VALIDATION,
 			Message: "No field to update.",
@@ -141,7 +141,8 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 			}
 		}
 	}
-	todoExists, err := ts.store.GetByID(id)
+	var userID uuid.UUID
+	todoExists, err := ts.store.GetByID(userID, id)
 	if errors.Is(err, apperrors.ErrTodoNotFound) {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.NOT_FOUND,
@@ -154,15 +155,15 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 			Message: apperrors.ErrInternalServerErrorMessage,
 		}
 	}
-	if t.Description != nil && t.IsDone != nil {
+	if t.Description != nil && t.Completed != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.CONFLICT,
 			Message: "It is impossible to edit a todo and mark it as already done at the same time.",
 		}
 	}
-	if t.IsDone != nil {
-		isDone := *t.IsDone
-		if isDone == todoExists.Completed {
+	if t.Completed != nil {
+		completed := *t.Completed
+		if completed == todoExists.Completed {
 			return nil, &apperrors.ServiceError{
 				Type:    apperrors.CONFLICT,
 				Message: "Nothing has changed.",
@@ -170,7 +171,7 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 		}
 		updateField = UpdateFieldDto{
 			ID:        id,
-			IsDone:    &isDone,
+			Completed:    &completed,
 			UpdatedAt: time.Now(),
 		}
 	} else if t.Description != nil {

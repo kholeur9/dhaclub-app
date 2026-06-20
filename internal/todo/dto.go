@@ -6,7 +6,7 @@ type TodoDto struct {
 	ID          string `json:"id"`
 	UserID      string `json:"user_id"`
 	Description string `json:"description"`
-	Done        bool   `json:"is_done"`
+	Completed   bool   `json:"completed"`
 }
 type CreateTodoDto struct {
 	Description string `json:"description"`
@@ -24,11 +24,11 @@ type DeleteTodoResponse struct {
 }
 type UpdateTodoDto struct {
 	Description *string `json:"description"`
-	IsDone      *bool   `json:"is_done"`
+	Completed   *bool   `json:"completed"`
 }
 type UpdateFieldDto struct {
-	ID    string        `json:"id"`
-	Description *string `json:"description"`
-	IsDone      *bool   `json:"is_done"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID          string    `json:"id"`
+	Description *string   `json:"description"`
+	Completed   *bool     `json:"completed"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
