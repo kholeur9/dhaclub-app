@@ -5,11 +5,16 @@ import (
 	//"context"
 	"encoding/json"
 
+	//"strings"
+
 	//"strconv"
 	//"html"
 	"net/http"
 
+	"github.com/google/uuid"
+	"github.com/kholeur9/dhaclub-app/internal/apperrors"
 	"github.com/kholeur9/dhaclub-app/internal/response"
+	"github.com/kholeur9/dhaclub-app/internal/shared"
 )
 
 type HandlerTodo struct {
@@ -21,6 +26,22 @@ func NewHandlerTodo(todoService *TodoService) *HandlerTodo {
 }
 
 func (s *HandlerTodo) CreateTodoHandler(w http.ResponseWriter, r *http.Request) {
+	userIDContext := r.Context().Value(shared.UserIDKey)
+	if userIDContext == nil {
+		response.HandleServiceError(w, &apperrors.ServiceError{
+			Type: apperrors.UNAUTHORIZED,
+			Message: apperrors.UserNotAuthticated,
+		})
+		return
+	}
+	userID, ok := userIDContext.(uuid.UUID)
+	if !ok {
+		response.HandleServiceError(w, &apperrors.ServiceError{
+			Type: apperrors.INTERNAL,
+			Message: apperrors.ErrInternalServerErrorMessage,
+		})
+		return
+	}
 	// read and matched elements to body in struct
 	var structData CreateTodoDto
 	if readJSON := json.NewDecoder(r.Body).Decode(&structData); readJSON != nil {
@@ -28,7 +49,7 @@ func (s *HandlerTodo) CreateTodoHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	// Send data at service
-	todo, err := s.todoService.CreateTodo(structData)
+	todo, err := s.todoService.CreateTodo(userID, structData)
 	if err != nil {
 		response.HandleServiceError(w, err)
 		return

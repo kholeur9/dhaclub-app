@@ -4,6 +4,7 @@ import "time"
 
 type TodoDto struct {
 	ID          string `json:"id"`
+	UserID      string `json:"user_id"`
 	Description string `json:"description"`
 	Done        bool   `json:"is_done"`
 }

@@ -57,7 +57,7 @@ func (as *AuthService) LoginUser(lu user.LoginUserDto) (*user.LoginUserResponse,
 			Message: apperrors.ErrInternalServerErrorMessage,
 		}
 	}
-	access_token, err := as.jwtService.GenerateToken(userFound.ID)
+	access_token, err := as.jwtService.GenerateToken(userFound.Username, userFound.ID)
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type: apperrors.INTERNAL,
@@ -68,7 +68,7 @@ func (as *AuthService) LoginUser(lu user.LoginUserDto) (*user.LoginUserResponse,
 		Message: "Successfuly",
 		AccessToken: access_token,
 		Data: user.LoginResponse{
-			ID:        userFound.ID,
+			ID:        userFound.ID.String(),
 			Email:     userFound.Email,
 			Username:  userFound.Username,
 			IsActive:  userFound.IsActive,

@@ -1,5 +1,5 @@
 package shared
 
-type userContextKey string
+type UserContextKey string
 
-var UserIDKey = userContextKey("userIDKey")
+var UserIDKey = UserContextKey("userIDKey")

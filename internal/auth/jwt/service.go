@@ -5,6 +5,7 @@ import (
 
 	//"fmt"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"github.com/kholeur9/dhaclub-app/internal/apperrors"
 )
 
@@ -18,12 +19,12 @@ func NewJwtService(key string) *JwtService {
 	}
 }
 
-func (jws *JwtService) GenerateToken(userID string) (string, error) {
+func (jws *JwtService) GenerateToken(username string, userID uuid.UUID) (string, error) {
 	SigningKey := []byte(jws.key)
 	claims := Claims{
-		userID,
+		username,
 		jwt.RegisteredClaims{
-			Subject: userID,
+			Subject: userID.String(),
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 			IssuedAt: jwt.NewNumericDate(time.Now()),
 		},

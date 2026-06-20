@@ -21,6 +21,8 @@ const (
 
 	InvalidCredentials = "Identifier or password invalid"
 	AccountNotActive   = "Account not active."
+
+	UserNotAuthticated = "User not authenticated"
 )
 
 // TODO

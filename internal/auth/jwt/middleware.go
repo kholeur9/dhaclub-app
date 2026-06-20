@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/kholeur9/dhaclub-app/internal/shared"
 )
 
@@ -42,7 +43,11 @@ func (ams *MiddlewareService) AuthMiddleware(next http.Handler) http.Handler {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
-		ctx := context.WithValue(r.Context(), shared.UserIDKey, claims.Subject)
+		subject, err := uuid.Parse(claims.Subject)
+		if err != nil {
+			http.Error(w, "Invalid user identity", http.StatusUnauthorized)
+		}
+		ctx := context.WithValue(r.Context(), shared.UserIDKey, subject)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

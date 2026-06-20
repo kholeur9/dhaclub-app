@@ -18,10 +18,10 @@ func NewMemoryTodo() *MemoryTodo {
 }
 
 func (t *MemoryTodo) Add(td Todo) error {
-	if _, exists := t.todos[td.ID]; exists {
+	if _, exists := t.todos[td.ID.String()]; exists {
 		return apperrors.ErrTodoNotFound
 	}
-	t.todos[td.ID] = &td
+	t.todos[td.ID.String()] = &td
 	return nil
 }
 

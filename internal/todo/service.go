@@ -19,7 +19,7 @@ func NewTodoService(store TodoStore) *TodoService {
 	}
 }
 
-func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) {
+func (ts *TodoService) CreateTodo(userID uuid.UUID, t CreateTodoDto) (*CreateTodoResponse, error) {
 	description := strings.TrimSpace(t.Description)
 	if description == "" {
 		return nil, &apperrors.ServiceError{
@@ -46,9 +46,10 @@ func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) 
 			Message: "Todo already exists.",
 		}
 	}
-	createdID := uuid.New().String()
+	createdID := uuid.New()
 	newTodo := Todo{
 		ID:          createdID,
+		UserID:		 userID,
 		Description: description,
 	}
 	todo, err := ts.store.Add(newTodo)
@@ -61,9 +62,10 @@ func (ts *TodoService) CreateTodo(t CreateTodoDto) (*CreateTodoResponse, error) 
 	return &CreateTodoResponse{
 		Message: "Successfully",
 		Data: TodoDto{
-			ID:          todo.ID,
+			ID:          todo.ID.String(),
+			UserID:		 todo.UserID.String(),
 			Description: todo.Description,
-			Done:        todo.IsDone,
+			Done:        todo.Completed,
 		},
 	}, nil
 }
@@ -160,7 +162,7 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 	}
 	if t.IsDone != nil {
 		isDone := *t.IsDone
-		if isDone == todoExists.IsDone {
+		if isDone == todoExists.Completed {
 			return nil, &apperrors.ServiceError{
 				Type:    apperrors.CONFLICT,
 				Message: "Nothing has changed.",

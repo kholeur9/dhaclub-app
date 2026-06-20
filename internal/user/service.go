@@ -86,7 +86,7 @@ func (us *UserService) CreateUser(u CreateUserDto) (*CreateUserResponseDto, erro
 		}
 	}
 	newUser := User{
-		ID:       uuid.New().String(),
+		ID:       uuid.New(),
 		Email:    email,
 		Username: username,
 		Password: passwordhashed,
@@ -101,7 +101,7 @@ func (us *UserService) CreateUser(u CreateUserDto) (*CreateUserResponseDto, erro
 	return &CreateUserResponseDto{
 		Message: "Successfuly",
 		Data: CreateUserResponse{
-			ID:        user.ID,
+			ID:        user.ID.String(),
 			Email:     user.Email,
 			Username:  user.Username,
 			CreatedAt: user.CreatedAt,
@@ -241,7 +241,7 @@ func (us *UserService) UserUpdate(id string, ud UpdateDto) (*UpdateResponseDto, 
 	return &UpdateResponseDto{
 		Message: "Successfuly",
 		Data: UpdateResponse{
-			ID:        userUpdate.ID,
+			ID:        userUpdate.ID.String(),
 			Email:     &userUpdate.Email,
 			Username:  &userUpdate.Username,
 			UpdatedAt: *userUpdate.UpdatedAt,
