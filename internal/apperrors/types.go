@@ -8,4 +8,5 @@ const (
 	INTERNAL ErrorType = "INTERNAL"
 	NOT_FOUND ErrorType = "NOT_FOUND"
 	UNAUTHORIZED ErrorType = "UNAUTHORIZED"
+	FORBIDDEN ErrorType = "FORBIDDEN"
 )

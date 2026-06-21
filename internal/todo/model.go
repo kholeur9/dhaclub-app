@@ -19,7 +19,7 @@ type TodoStore interface {
 	Add(t Todo) (*Todo, error)
 	ExistsByDescription(desc string) (bool, error)
 	TodosList(userID uuid.UUID) ([]*Todo, error)
-	GetByID(userID uuid.UUID, todoID string) (*Todo, error)
+	GetUserTodoByID(userID uuid.UUID, todoID string) (*Todo, error)
 	DeleteTodo(id string) (*string, error)
 	UpdateTodo(t UpdateFieldDto) (*Todo, error)
 }

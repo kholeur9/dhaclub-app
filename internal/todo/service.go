@@ -71,7 +71,7 @@ func (ts *TodoService) CreateTodo(userID uuid.UUID, t CreateTodoDto) (*CreateTod
 }
 
 func (ts *TodoService) GetTodoByID(userID uuid.UUID, todoID string) (*Todo, error) {
-	todo, err := ts.store.GetByID(userID, todoID)
+	todo, err := ts.store.GetUserTodoByID(userID, todoID)
 	if errors.Is(err, apperrors.ErrTodoNotFound) {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.NOT_FOUND,
@@ -142,7 +142,7 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 		}
 	}
 	var userID uuid.UUID
-	todoExists, err := ts.store.GetByID(userID, id)
+	todoExists, err := ts.store.GetUserTodoByID(userID, id)
 	if errors.Is(err, apperrors.ErrTodoNotFound) {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.NOT_FOUND,
