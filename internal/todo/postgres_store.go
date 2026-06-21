@@ -3,6 +3,7 @@ package todo
 import (
 	"database/sql"
 	//"fmt"
+	"errors"
 
 	"github.com/google/uuid"
 	"github.com/kholeur9/dhaclub-app/internal/apperrors"
@@ -60,13 +61,12 @@ func (pt *PostgresTodo) TodosList(userID uuid.UUID) ([]*Todo, error) {
 	return todos, nil
 }
 
-func (pt *PostgresTodo) GetUserTodoByID(userID uuid.UUID, todoID string) (*Todo, error) {
+func (pt *PostgresTodo) GetUserTodoByID(userID , todoID uuid.UUID) (*Todo, error) {
 	var todo Todo
 	row := pt.db.QueryRow(`
 	SELECT id, user_id, description, completed, created_at, updated_at FROM todos WHERE id = $1 AND user_id = $2`, todoID, userID)
-	err := row.Scan(&todo.ID, &todo.UserID, &todo.Description, &todo.Completed, &todo.CreatedAt, &todo.UpdatedAt)
-	if err != nil {
-		if err == sql.ErrNoRows {
+	if err := row.Scan(&todo.ID, &todo.UserID, &todo.Description, &todo.Completed, &todo.CreatedAt, &todo.UpdatedAt); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
 			return nil, apperrors.ErrTodoNotFound
 		}
 		return nil, err
