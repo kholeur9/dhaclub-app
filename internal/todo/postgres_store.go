@@ -61,7 +61,7 @@ func (pt *PostgresTodo) TodosList(userID uuid.UUID) ([]*Todo, error) {
 	return todos, nil
 }
 
-func (pt *PostgresTodo) GetUserTodoByID(userID , todoID uuid.UUID) (*Todo, error) {
+func (pt *PostgresTodo) GetUserTodoByID(userID uuid.UUID, todoID uuid.UUID) (*Todo, error) {
 	var todo Todo
 	row := pt.db.QueryRow(`
 	SELECT id, user_id, description, completed, created_at, updated_at FROM todos WHERE id = $1 AND user_id = $2`, todoID, userID)

@@ -71,7 +71,13 @@ func (ts *TodoService) CreateTodo(userID uuid.UUID, t CreateTodoDto) (*CreateTod
 }
 
 func (ts *TodoService) GetTodoByID(userID uuid.UUID, todoID string) (*Todo, error) {
-	todoIDParse, _ := uuid.Parse(todoID)
+	todoIDParse, err := uuid.Parse(todoID)
+	if err != nil {
+		return nil, &apperrors.ServiceError{
+			Type:    apperrors.VALIDATION,
+			Message: "Impossible to recover the todo.",
+		}
+	}
 	todo, err := ts.store.GetUserTodoByID(userID, todoIDParse)
 	if errors.Is(err, apperrors.ErrTodoNotFound) {
 		return nil, &apperrors.ServiceError{
