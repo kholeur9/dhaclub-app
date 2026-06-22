@@ -109,8 +109,24 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *HandlerTodo) DeleteTodoHandler(w http.ResponseWriter, r *http.Request) {
-	id := r.PathValue("id")
-	result, err := s.todoService.DeleteTodo(id)
+	userIDContext := r.Context().Value(shared.UserIDKey)
+	if userIDContext == nil {
+		response.HandleServiceError(w, &apperrors.ServiceError{
+			Type: apperrors.UNAUTHORIZED,
+			Message: apperrors.UserNotAuthticated,
+		})
+		return
+	}
+	userID, ok := userIDContext.(uuid.UUID)
+	if !ok {
+		response.HandleServiceError(w, &apperrors.ServiceError{
+			Type: apperrors.INTERNAL,
+			Message: apperrors.ErrInternalServerErrorMessage,
+		})
+		return
+	}
+	todoID := r.PathValue("id")
+	result, err := s.todoService.DeleteTodo(userID, todoID)
 	if err != nil {
 		response.HandleServiceError(w, err)
 		return

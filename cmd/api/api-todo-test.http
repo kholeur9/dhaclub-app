@@ -2,7 +2,7 @@ post http://localhost:8080/todo
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiVG9udGluZSBHMTAwIiwic3ViIjoiYjA4YTFiZTAtM2U2ZS00MmIwLTlkNWYtZWU1MzYxZTQ1YjAxIiwiZXhwIjoxNzgyMTY0NTk1LCJpYXQiOjE3ODIwNzgxOTV9.e1wtX7Qs6tc6aEIwGNmnbY2gSb8DLi-98is9GzefF8c
 
 {
-    "description": "30 aout 1999."
+    "description": "30 aout 2000."
 }
 
 ###
@@ -14,7 +14,8 @@ get http://localhost:8080/todos
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiVG9udGluZSBHMTAwIiwic3ViIjoiYjA4YTFiZTAtM2U2ZS00MmIwLTlkNWYtZWU1MzYxZTQ1YjAxIiwiZXhwIjoxNzgyMTY0NTk1LCJpYXQiOjE3ODIwNzgxOTV9.e1wtX7Qs6tc6aEIwGNmnbY2gSb8DLi-98is9GzefF8c
 
 ###
-delete http://localhost:8080/todos/88f67b3e-5b92-47e0-a7cb-0d274cf57229
+delete http://localhost:8080/todos/d1ac5ac6-4c0c-477b-9211-5b1f4e6eccd3
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiVG9udGluZSBHMTAwIiwic3ViIjoiYjA4YTFiZTAtM2U2ZS00MmIwLTlkNWYtZWU1MzYxZTQ1YjAxIiwiZXhwIjoxNzgyMTY0NTk1LCJpYXQiOjE3ODIwNzgxOTV9.e1wtX7Qs6tc6aEIwGNmnbY2gSb8DLi-98is9GzefF8c
 
 ###
 patch http://localhost:8080/todos/f31041a5-ee83-4036-82e8-0916c9701e86
