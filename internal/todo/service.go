@@ -1,7 +1,7 @@
 package todo
 
 import (
-	"fmt"
+	//"fmt"
 	"errors"
 	"strings"
 	"time"
@@ -164,7 +164,6 @@ func (ts *TodoService) UpdateTodo(userID uuid.UUID, todoID string, t UpdateTodoD
 		}
 	}
 	todoExists, err := ts.store.GetUserTodoByID(userID, parsedTodoID)
-	fmt.Println("1:", err)
 	if errors.Is(err, apperrors.ErrTodoNotFound) {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.NOT_FOUND,
@@ -204,19 +203,6 @@ func (ts *TodoService) UpdateTodo(userID uuid.UUID, todoID string, t UpdateTodoD
 				Message: "Nothing has changed.",
 			}
 		}
-		exists, err := ts.store.ExistsByDescription(description)
-		if err != nil {
-			return nil, &apperrors.ServiceError{
-				Type:    apperrors.INTERNAL,
-				Message: apperrors.ErrInternalServerErrorMessage,
-			}
-		}
-		if exists {
-			return nil, &apperrors.ServiceError{
-				Type:    apperrors.CONFLICT,
-				Message: "This description is already a todo.",
-			}
-		}
 		updateField = UpdateFieldDto{
 			ID:          parsedTodoID,
 			Description: &description,
@@ -224,7 +210,6 @@ func (ts *TodoService) UpdateTodo(userID uuid.UUID, todoID string, t UpdateTodoD
 		}
 	}
 	todoUpdated, err := ts.store.UpdateTodo(userID, updateField)
-	fmt.Println("2:", err)
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,

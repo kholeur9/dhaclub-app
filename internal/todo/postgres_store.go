@@ -78,10 +78,11 @@ func (pt *PostgresTodo) GetUserTodoByID(userID uuid.UUID, todoID uuid.UUID) (*To
 func (pt *PostgresTodo) DeleteTodo(userID uuid.UUID, todoID uuid.UUID) (*string, error) {
 	var todoId string
 	result := pt.db.QueryRow(`DELETE FROM todos WHERE id = $1 AND user_id = $2 RETURNING id`, todoID, userID)
-	if err := result.Scan(&todoId); err != nil {
-		if err == sql.ErrNoRows {
-			return nil, apperrors.ErrTodoNotFound
-		}
+	err := result.Scan(&todoId)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, apperrors.ErrTodoNotFound
+	}
+	if err != nil {
 		return nil, err
 	}
 	return &todoId, nil
