@@ -75,29 +75,37 @@ func (pt *PostgresTodo) GetUserTodoByID(userID uuid.UUID, todoID uuid.UUID) (*To
 	return &todo, nil
 }
 
-func (pt *PostgresTodo) DeleteTodo(userID uuid.UUID, todoID uuid.UUID) (*string, error) {
+func (pt *PostgresTodo) DeleteTodo(userID uuid.UUID, todoID uuid.UUID) error {
 	var todoId string
 	result := pt.db.QueryRow(`DELETE FROM todos WHERE id = $1 AND user_id = $2 RETURNING id`, todoID, userID)
 	err := result.Scan(&todoId)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, apperrors.ErrTodoNotFound
+		return apperrors.ErrTodoNotFound
 	}
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return &todoId, nil
+	return nil
 }
 
 func (pt *PostgresTodo) UpdateTodo(userID uuid.UUID, dto UpdateFieldDto) (*Todo, error) {
 	var todoUpdated Todo
 	if dto.Description != nil {
-		row := pt.db.QueryRow(`UPDATE todos SET description = $1, completed = $2, updated_at = $3 WHERE id = $4 AND user_id = $5 RETURNING id, user_id, description, completed, created_at, updated_at`, dto.Description, false, dto.UpdatedAt, dto.ID, userID)
-		if err := row.Scan(&todoUpdated.ID, &todoUpdated.UserID, &todoUpdated.Description, &todoUpdated.Completed, &todoUpdated.CreatedAt, &todoUpdated.UpdatedAt); err != nil {
+		row := pt.db.QueryRow(`UPDATE todos SET description = $1, updated_at = $2 WHERE id = $3 AND user_id = $4 RETURNING id, user_id, description, completed, created_at, updated_at`, dto.Description, dto.UpdatedAt, dto.ID, userID)
+		err := row.Scan(&todoUpdated.ID, &todoUpdated.UserID, &todoUpdated.Description, &todoUpdated.Completed, &todoUpdated.CreatedAt, &todoUpdated.UpdatedAt)
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, apperrors.ErrTodoNotFound
+		}
+		if err != nil {
 			return nil, err
 		}
 	} else if dto.Completed != nil {
 		row := pt.db.QueryRow(`UPDATE todos SET completed = $1, updated_at = $2 WHERE id = $3 AND user_id = $4 RETURNING id, user_id, description, completed, created_at, updated_at`, dto.Completed, dto.UpdatedAt, dto.ID, userID)
-		if err := row.Scan(&todoUpdated.ID, &todoUpdated.UserID, &todoUpdated.Description, &todoUpdated.Completed, &todoUpdated.CreatedAt, &todoUpdated.UpdatedAt); err != nil {
+		err := row.Scan(&todoUpdated.ID, &todoUpdated.UserID, &todoUpdated.Description, &todoUpdated.Completed, &todoUpdated.CreatedAt, &todoUpdated.UpdatedAt)
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, apperrors.ErrTodoNotFound
+		}
+		if err != nil {
 			return nil, err
 		}
 	}
