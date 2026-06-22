@@ -1,6 +1,10 @@
 package todo
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type TodoDto struct {
 	ID          string `json:"id"`
@@ -27,7 +31,7 @@ type UpdateTodoDto struct {
 	Completed   *bool   `json:"completed"`
 }
 type UpdateFieldDto struct {
-	ID          string    `json:"id"`
+	ID          uuid.UUID `json:"id"`
 	Description *string   `json:"description"`
 	Completed   *bool     `json:"completed"`
 	UpdatedAt   time.Time `json:"updated_at"`

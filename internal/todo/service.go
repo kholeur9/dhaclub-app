@@ -1,6 +1,7 @@
 package todo
 
 import (
+	"fmt"
 	"errors"
 	"strings"
 	"time"
@@ -49,7 +50,7 @@ func (ts *TodoService) CreateTodo(userID uuid.UUID, t CreateTodoDto) (*CreateTod
 	createdID := uuid.New()
 	newTodo := Todo{
 		ID:          createdID,
-		UserID:		 userID,
+		UserID:      userID,
 		Description: description,
 	}
 	todo, err := ts.store.Add(newTodo)
@@ -63,7 +64,7 @@ func (ts *TodoService) CreateTodo(userID uuid.UUID, t CreateTodoDto) (*CreateTod
 		Message: "Successfully",
 		Data: TodoDto{
 			ID:          todo.ID.String(),
-			UserID:		 todo.UserID.String(),
+			UserID:      todo.UserID.String(),
 			Description: todo.Description,
 			Completed:   todo.Completed,
 		},
@@ -132,7 +133,7 @@ func (ts *TodoService) DeleteTodo(userID uuid.UUID, todoID string) (*DeleteTodoR
 	}, nil
 }
 
-func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
+func (ts *TodoService) UpdateTodo(userID uuid.UUID, todoID string, t UpdateTodoDto) (*Todo, error) {
 	var updateField UpdateFieldDto
 	if t.Description == nil && t.Completed == nil {
 		return nil, &apperrors.ServiceError{
@@ -155,15 +156,15 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 			}
 		}
 	}
-	var userID uuid.UUID
-	todoID, err := uuid.Parse(id)
+	parsedTodoID, err := uuid.Parse(todoID)
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.NOT_FOUND,
 			Message: apperrors.ErrTodoNotFoundMessage,
 		}
 	}
-	todoExists, err := ts.store.GetUserTodoByID(userID, todoID)
+	todoExists, err := ts.store.GetUserTodoByID(userID, parsedTodoID)
+	fmt.Println("1:", err)
 	if errors.Is(err, apperrors.ErrTodoNotFound) {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.NOT_FOUND,
@@ -191,8 +192,8 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 			}
 		}
 		updateField = UpdateFieldDto{
-			ID:        id,
-			Completed:    &completed,
+			ID:        parsedTodoID,
+			Completed: &completed,
 			UpdatedAt: time.Now(),
 		}
 	} else if t.Description != nil {
@@ -217,12 +218,13 @@ func (ts *TodoService) UpdateTodo(id string, t UpdateTodoDto) (*Todo, error) {
 			}
 		}
 		updateField = UpdateFieldDto{
-			ID:          id,
+			ID:          parsedTodoID,
 			Description: &description,
 			UpdatedAt:   time.Now(),
 		}
 	}
-	todoUpdated, err := ts.store.UpdateTodo(updateField)
+	todoUpdated, err := ts.store.UpdateTodo(userID, updateField)
+	fmt.Println("2:", err)
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,

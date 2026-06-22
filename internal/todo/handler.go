@@ -135,14 +135,30 @@ func (s *HandlerTodo) DeleteTodoHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 func (s *HandlerTodo) UpdateTodoHandler(w http.ResponseWriter, r *http.Request) {
-	id := r.PathValue("id")
+	userIDContext := r.Context().Value(shared.UserIDKey)
+	if userIDContext == nil {
+		response.HandleServiceError(w, &apperrors.ServiceError{
+			Type: apperrors.UNAUTHORIZED,
+			Message: apperrors.UserNotAuthticated,
+		})
+		return
+	}
+	userID, ok := userIDContext.(uuid.UUID)
+	if !ok {
+		response.HandleServiceError(w, &apperrors.ServiceError{
+			Type: apperrors.INTERNAL,
+			Message: apperrors.ErrInternalServerErrorMessage,
+		})
+		return
+	}
+	todoID := r.PathValue("id")
 	var structData UpdateTodoDto
 	if err := json.NewDecoder(r.Body).Decode(&structData); err != nil {
 		response.HandleServiceError(w, err)
 		return
 	}
 	//fmt.Printf("%+v\n", structData)
-	result, err := s.todoService.UpdateTodo(id, structData)
+	result, err := s.todoService.UpdateTodo(userID, todoID, structData)
 	if err != nil {
 		response.HandleServiceError(w, err)
 		return

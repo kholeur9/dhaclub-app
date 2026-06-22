@@ -18,9 +18,10 @@ delete http://localhost:8080/todos/d1ac5ac6-4c0c-477b-9211-5b1f4e6eccd3
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiVG9udGluZSBHMTAwIiwic3ViIjoiYjA4YTFiZTAtM2U2ZS00MmIwLTlkNWYtZWU1MzYxZTQ1YjAxIiwiZXhwIjoxNzgyMTY0NTk1LCJpYXQiOjE3ODIwNzgxOTV9.e1wtX7Qs6tc6aEIwGNmnbY2gSb8DLi-98is9GzefF8c
 
 ###
-patch http://localhost:8080/todos/f31041a5-ee83-4036-82e8-0916c9701e86
+patch http://localhost:8080/todos/a6b6830b-5724-4965-88bf-d8837642baa0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiVG9udGluZSBHMTAwIiwic3ViIjoiYjA4YTFiZTAtM2U2ZS00MmIwLTlkNWYtZWU1MzYxZTQ1YjAxIiwiZXhwIjoxNzgyMTY0NTk1LCJpYXQiOjE3ODIwNzgxOTV9.e1wtX7Qs6tc6aEIwGNmnbY2gSb8DLi-98is9GzefF8c
 
 {
-    "description": "8 mai 2026.",
-    "is_done": true
+    "description": "30 aout 2024.",
+    "is_done": false
 }
