@@ -90,7 +90,7 @@ func (pt *PostgresTodo) DeleteUserTodo(userID uuid.UUID, todoID uuid.UUID) error
 
 func (pt *PostgresTodo) UpdateTodo(userID uuid.UUID, dto UpdateFieldDto) (*Todo, error) {
 	var todoUpdated Todo
-	row := pt.db.QueryRow(`UPDATE todos SET description = COALESCE($1, description), completed = COALESCE($2, completed), updated_at = $3 WHERE id = $4 AND user_id = $5`, dto.Description, dto.Completed, dto.UpdatedAt, dto.ID, userID)
+	row := pt.db.QueryRow(`UPDATE todos SET description = COALESCE($1, description), completed = COALESCE($2, completed), updated_at = $3 WHERE id = $4 AND user_id = $5 RETURNING id, user_id, description, completed, created_at, updated_at`, dto.Description, dto.Completed, dto.UpdatedAt, dto.ID, userID)
 	err := row.Scan(&todoUpdated.ID, &todoUpdated.UserID, &todoUpdated.Description, &todoUpdated.Completed, &todoUpdated.CreatedAt, &todoUpdated.UpdatedAt)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, apperrors.ErrTodoNotFound
