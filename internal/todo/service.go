@@ -76,7 +76,7 @@ func (ts *TodoService) GetTodoByID(userID uuid.UUID, todoID string) (*Todo, erro
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.NOT_FOUND,
-			Message: apperrors.ErrTodoNotFoundMessage,
+			Message: apperrors.TodoNotIdentified,
 		}
 	}
 	todo, err := ts.store.GetUserTodoByID(userID, todoIDParse)
@@ -111,10 +111,10 @@ func (ts *TodoService) DeleteTodo(userID uuid.UUID, todoID string) (*DeleteTodoR
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.NOT_FOUND,
-			Message: apperrors.ErrTodoNotFoundMessage,
+			Message: apperrors.TodoNotIdentified,
 		}
 	}
-	id, err := ts.store.DeleteTodo(userID, todoIDParse)
+	err = ts.store.DeleteUserTodo(userID, todoIDParse)
 	if errors.Is(err, apperrors.ErrTodoNotFound) {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.NOT_FOUND,
@@ -128,8 +128,7 @@ func (ts *TodoService) DeleteTodo(userID uuid.UUID, todoID string) (*DeleteTodoR
 		}
 	}
 	return &DeleteTodoResponse{
-		Message: "Successfully",
-		ID:      id,
+		Message: "Todo deleted successfully.",
 	}, nil
 }
 
@@ -160,7 +159,7 @@ func (ts *TodoService) UpdateTodo(userID uuid.UUID, todoID string, t UpdateTodoD
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.NOT_FOUND,
-			Message: apperrors.ErrTodoNotFoundMessage,
+			Message: apperrors.TodoNotIdentified,
 		}
 	}
 	todoExists, err := ts.store.GetUserTodoByID(userID, parsedTodoID)

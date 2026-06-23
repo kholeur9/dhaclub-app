@@ -1,7 +1,7 @@
 package apperrors
 
 // GENERIC
-const ErrInternalServerErrorMessage = "Internal server error"
+const ErrInternalServerErrorMessage = "Internal server error."
 
 // USER
 const (
@@ -29,5 +29,6 @@ const (
 
 // TODO
 const (
-	ErrTodoNotFoundMessage = "Todo not found"
+	ErrTodoNotFoundMessage = "Todo not found."
+	TodoNotIdentified = "Todo could not be identified."
 )
