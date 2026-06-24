@@ -103,6 +103,7 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 			Type: apperrors.VALIDATION,
 			Message: "Coversion impossible",
 		})
+		return
 	}
 	limit, err := strconv.Atoi(getURL.Get("limit"))
 	if err != nil {
@@ -110,6 +111,7 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 			Type: apperrors.VALIDATION,
 			Message: "Coversion impossible",
 		})
+		return
 	}
 	fmt.Println(page, limit)
 	userIDContext := r.Context().Value(shared.UserIDKey)
