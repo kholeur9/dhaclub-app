@@ -1,7 +1,7 @@
 package todo
 
 import (
-	"fmt"
+	//"fmt"
 	"strconv"
 	//"strings"
 
@@ -87,11 +87,23 @@ func (s *HandlerTodo) GetTodoByIDHandler(w http.ResponseWriter, r *http.Request)
 }
 
 func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
-	getURL := r.URL.Query()
-	if r.URL.String() == "/todos" {
-		getURL.Add("page", "1")
-		getURL.Add("limit", "20")
+	userIDContext := r.Context().Value(shared.UserIDKey)
+	if userIDContext == nil {
+		response.HandleServiceError(w, &apperrors.ServiceError{
+			Type: apperrors.UNAUTHORIZED,
+			Message: apperrors.UserNotAuthticated,
+		})
+		return
 	}
+	userID, ok := userIDContext.(uuid.UUID)
+	if !ok {
+		response.HandleServiceError(w, &apperrors.ServiceError{
+			Type: apperrors.INTERNAL,
+			Message: apperrors.ErrInternalServerErrorMessage,
+		})
+		return
+	}
+	getURL := r.URL.Query()
 	if !getURL.Has("page") && getURL.Has("limit") {
 		getURL.Add("page", "1")
 	} else if getURL.Has("page") && !getURL.Has("limit") {
@@ -113,24 +125,7 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
-	fmt.Println(page, limit)
-	userIDContext := r.Context().Value(shared.UserIDKey)
-	if userIDContext == nil {
-		response.HandleServiceError(w, &apperrors.ServiceError{
-			Type: apperrors.UNAUTHORIZED,
-			Message: apperrors.UserNotAuthticated,
-		})
-		return
-	}
-	userID, ok := userIDContext.(uuid.UUID)
-	if !ok {
-		response.HandleServiceError(w, &apperrors.ServiceError{
-			Type: apperrors.INTERNAL,
-			Message: apperrors.ErrInternalServerErrorMessage,
-		})
-		return
-	}
-	getAllTodos, err := s.todoService.TodosList(userID)
+	getAllTodos, err := s.todoService.TodosList(page, limit, userID)
 	if err != nil {
 		response.HandleServiceError(w, err)
 		return
