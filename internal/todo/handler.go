@@ -2,7 +2,7 @@ package todo
 
 import (
 	"fmt"
-	"strconv"
+	//"strconv"
 	//"strings"
 
 	//"context"
@@ -89,8 +89,9 @@ func (s *HandlerTodo) GetTodoByIDHandler(w http.ResponseWriter, r *http.Request)
 func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 	getURL := r.URL.Query()
 	//pageNumber := strings.Split(strings.Split(strings.Split(getURLpage, "/todos?")[1], "&")[0], "=")[1]
-	page, _ := strconv.Atoi(getURL["page"][0])
-	limit, _ := strconv.Atoi(getURL["limit"][1])
+	fmt.Println(getURL)
+	page := getURL["page"]
+	limit := getURL["limit"]
 	fmt.Println(page, limit)
 	userIDContext := r.Context().Value(shared.UserIDKey)
 	if userIDContext == nil {
