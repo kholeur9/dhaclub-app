@@ -92,9 +92,25 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 		getURL.Add("page", "1")
 		getURL.Add("limit", "20")
 	}
-	fmt.Println(r.URL)
-	page, _ := strconv.Atoi(getURL.Get("page"))
-	limit, _ := strconv.Atoi(getURL.Get("limit"))
+	if !getURL.Has("page") && getURL.Has("limit") {
+		getURL.Add("page", "1")
+	} else if getURL.Has("page") && !getURL.Has("limit") {
+		getURL.Add("limit", "20")
+	}
+	page, err := strconv.Atoi(getURL.Get("page"))
+	if err != nil {
+		response.HandleServiceError(w, &apperrors.ServiceError{
+			Type: apperrors.VALIDATION,
+			Message: "Coversion impossible",
+		})
+	}
+	limit, err := strconv.Atoi(getURL.Get("limit"))
+	if err != nil {
+		response.HandleServiceError(w, &apperrors.ServiceError{
+			Type: apperrors.VALIDATION,
+			Message: "Coversion impossible",
+		})
+	}
 	fmt.Println(page, limit)
 	userIDContext := r.Context().Value(shared.UserIDKey)
 	if userIDContext == nil {
