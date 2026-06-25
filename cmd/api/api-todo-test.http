@@ -10,7 +10,7 @@ get http://localhost:8080/todos/d339ae87-3c6c-439c-8907-f3a592a47452
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiVG9udGluZSBHMTAwIiwic3ViIjoiYjA4YTFiZTAtM2U2ZS00MmIwLTlkNWYtZWU1MzYxZTQ1YjAxIiwiZXhwIjoxNzgyMTY0NTk1LCJpYXQiOjE3ODIwNzgxOTV9.e1wtX7Qs6tc6aEIwGNmnbY2gSb8DLi-98is9GzefF8c
 
 ###
-get http://localhost:8080/todos?toto=1&ali=20
+get http://localhost:8080/todos?page=&limit=
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiVG9udGluZSBHMTAwIiwic3ViIjoiYjA4YTFiZTAtM2U2ZS00MmIwLTlkNWYtZWU1MzYxZTQ1YjAxIiwiZXhwIjoxNzgyMzM3ODE1LCJpYXQiOjE3ODIyNTE0MTV9.3FnrH9yrok04vpXdMdNNdmSNT2rJzpEZygo0Ks5bFr4
 
 ###

@@ -1,7 +1,7 @@
 package todo
 
 import (
-	//"fmt"
+	"fmt"
 	"strconv"
 	//"strings"
 
@@ -32,7 +32,7 @@ func (s *HandlerTodo) CreateTodoHandler(w http.ResponseWriter, r *http.Request) 
 	userIDContext := r.Context().Value(shared.UserIDKey)
 	if userIDContext == nil {
 		response.HandleServiceError(w, &apperrors.ServiceError{
-			Type: apperrors.UNAUTHORIZED,
+			Type:    apperrors.UNAUTHORIZED,
 			Message: apperrors.UserNotAuthticated,
 		})
 		return
@@ -40,7 +40,7 @@ func (s *HandlerTodo) CreateTodoHandler(w http.ResponseWriter, r *http.Request) 
 	userID, ok := userIDContext.(uuid.UUID)
 	if !ok {
 		response.HandleServiceError(w, &apperrors.ServiceError{
-			Type: apperrors.INTERNAL,
+			Type:    apperrors.INTERNAL,
 			Message: apperrors.ErrInternalServerErrorMessage,
 		})
 		return
@@ -64,7 +64,7 @@ func (s *HandlerTodo) GetTodoByIDHandler(w http.ResponseWriter, r *http.Request)
 	userIDContext := r.Context().Value(shared.UserIDKey)
 	if userIDContext == nil {
 		response.HandleServiceError(w, &apperrors.ServiceError{
-			Type: apperrors.UNAUTHORIZED,
+			Type:    apperrors.UNAUTHORIZED,
 			Message: apperrors.UserNotAuthticated,
 		})
 		return
@@ -72,7 +72,7 @@ func (s *HandlerTodo) GetTodoByIDHandler(w http.ResponseWriter, r *http.Request)
 	userID, ok := userIDContext.(uuid.UUID)
 	if !ok {
 		response.HandleServiceError(w, &apperrors.ServiceError{
-			Type: apperrors.INTERNAL,
+			Type:    apperrors.INTERNAL,
 			Message: apperrors.ErrInternalServerErrorMessage,
 		})
 		return
@@ -90,7 +90,7 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 	userIDContext := r.Context().Value(shared.UserIDKey)
 	if userIDContext == nil {
 		response.HandleServiceError(w, &apperrors.ServiceError{
-			Type: apperrors.UNAUTHORIZED,
+			Type:    apperrors.UNAUTHORIZED,
 			Message: apperrors.UserNotAuthticated,
 		})
 		return
@@ -98,21 +98,30 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 	userID, ok := userIDContext.(uuid.UUID)
 	if !ok {
 		response.HandleServiceError(w, &apperrors.ServiceError{
-			Type: apperrors.INTERNAL,
+			Type:    apperrors.INTERNAL,
 			Message: apperrors.ErrInternalServerErrorMessage,
 		})
 		return
 	}
 	getURL := r.URL.Query()
-	if !getURL.Has("page") && getURL.Has("limit") {
-		getURL.Add("page", "1")
-	} else if getURL.Has("page") && !getURL.Has("limit") {
-		getURL.Add("limit", "20")
+	switch {
+		case !getURL.Has("page"):
+			getURL.Add("page", "1")
+		case !getURL.Has("limit"):
+			getURL.Add("limit", "20")
+		case !getURL.Has("page") && getURL.Has("limit"):
+			getURL.Add("page", "1")
+		case getURL.Has("page") && !getURL.Has("limit"):
+			getURL.Add("limit", "20")
+		case r.URL.String() == "/todos":
+			getURL.Add("page", "1")
+			getURL.Add("limit", "20")
 	}
+	fmt.Println(r.URL.String())
 	page, err := strconv.Atoi(getURL.Get("page"))
 	if err != nil {
 		response.HandleServiceError(w, &apperrors.ServiceError{
-			Type: apperrors.VALIDATION,
+			Type:    apperrors.VALIDATION,
 			Message: "Coversion impossible",
 		})
 		return
@@ -120,7 +129,7 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 	limit, err := strconv.Atoi(getURL.Get("limit"))
 	if err != nil {
 		response.HandleServiceError(w, &apperrors.ServiceError{
-			Type: apperrors.VALIDATION,
+			Type:    apperrors.VALIDATION,
 			Message: "Coversion impossible",
 		})
 		return
@@ -137,7 +146,7 @@ func (s *HandlerTodo) DeleteTodoHandler(w http.ResponseWriter, r *http.Request) 
 	userIDContext := r.Context().Value(shared.UserIDKey)
 	if userIDContext == nil {
 		response.HandleServiceError(w, &apperrors.ServiceError{
-			Type: apperrors.UNAUTHORIZED,
+			Type:    apperrors.UNAUTHORIZED,
 			Message: apperrors.UserNotAuthticated,
 		})
 		return
@@ -145,7 +154,7 @@ func (s *HandlerTodo) DeleteTodoHandler(w http.ResponseWriter, r *http.Request) 
 	userID, ok := userIDContext.(uuid.UUID)
 	if !ok {
 		response.HandleServiceError(w, &apperrors.ServiceError{
-			Type: apperrors.INTERNAL,
+			Type:    apperrors.INTERNAL,
 			Message: apperrors.ErrInternalServerErrorMessage,
 		})
 		return
@@ -163,7 +172,7 @@ func (s *HandlerTodo) UpdateTodoHandler(w http.ResponseWriter, r *http.Request) 
 	userIDContext := r.Context().Value(shared.UserIDKey)
 	if userIDContext == nil {
 		response.HandleServiceError(w, &apperrors.ServiceError{
-			Type: apperrors.UNAUTHORIZED,
+			Type:    apperrors.UNAUTHORIZED,
 			Message: apperrors.UserNotAuthticated,
 		})
 		return
@@ -171,7 +180,7 @@ func (s *HandlerTodo) UpdateTodoHandler(w http.ResponseWriter, r *http.Request) 
 	userID, ok := userIDContext.(uuid.UUID)
 	if !ok {
 		response.HandleServiceError(w, &apperrors.ServiceError{
-			Type: apperrors.INTERNAL,
+			Type:    apperrors.INTERNAL,
 			Message: apperrors.ErrInternalServerErrorMessage,
 		})
 		return
