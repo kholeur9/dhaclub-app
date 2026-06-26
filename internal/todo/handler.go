@@ -1,7 +1,7 @@
 package todo
 
 import (
-	"fmt"
+	//"fmt"
 	"strconv"
 	//"strings"
 
@@ -104,20 +104,17 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	getURL := r.URL.Query()
-	switch {
-		case !getURL.Has("page"):
-			getURL.Add("page", "1")
-		case !getURL.Has("limit"):
-			getURL.Add("limit", "20")
-		case !getURL.Has("page") && getURL.Has("limit"):
-			getURL.Add("page", "1")
-		case getURL.Has("page") && !getURL.Has("limit"):
-			getURL.Add("limit", "20")
-		case r.URL.String() == "/todos":
-			getURL.Add("page", "1")
-			getURL.Add("limit", "20")
+	if !getURL.Has("page") {
+		getURL.Add("page", "1")
 	}
-	fmt.Println(r.URL.String())
+	if !getURL.Has("limit") {
+		getURL.Add("limit", "20")
+	}
+	getPage := getURL.Get("page")
+	getLimt := getURL.Get("limit")
+	if getPage == "" {
+		getURL.Set("page", "1")
+	}
 	page, err := strconv.Atoi(getURL.Get("page"))
 	if err != nil {
 		response.HandleServiceError(w, &apperrors.ServiceError{
@@ -125,6 +122,9 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 			Message: "Coversion impossible",
 		})
 		return
+	}
+	if getLimit == "" {
+		getURL.Set("limit", "20")
 	}
 	limit, err := strconv.Atoi(getURL.Get("limit"))
 	if err != nil {

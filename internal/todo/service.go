@@ -1,7 +1,7 @@
 package todo
 
 import (
-	//"fmt"
+	"fmt"
 	"errors"
 	"strings"
 	"time"
@@ -96,6 +96,7 @@ func (ts *TodoService) GetTodoByID(userID uuid.UUID, todoID string) (*Todo, erro
 }
 
 func (ts *TodoService) TodosList(page int, limit int, userID uuid.UUID) ([]*Todo, error) {
+	fmt.Println("Service:", page, limit)
 	getAllTodos, err := ts.store.TodosList(userID)
 	if err != nil {
 		return nil, &apperrors.ServiceError{
