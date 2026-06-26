@@ -111,7 +111,7 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 		getURL.Add("limit", "20")
 	}
 	getPage := getURL.Get("page")
-	getLimt := getURL.Get("limit")
+	getLimit := getURL.Get("limit")
 	if getPage == "" {
 		getURL.Set("page", "1")
 	}
