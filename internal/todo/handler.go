@@ -86,7 +86,12 @@ func (s *HandlerTodo) GetTodoByIDHandler(w http.ResponseWriter, r *http.Request)
 	response.WriteResponse(w, 200, todo)
 }
 
+type TodoFilter struct {
+	Completed *bool
+}
+
 func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
+	var todoFilter TodoFilter
 	userIDContext := r.Context().Value(shared.UserIDKey)
 	if userIDContext == nil {
 		response.HandleServiceError(w, &apperrors.ServiceError{
@@ -133,7 +138,6 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Filtered by completed or not completed
-	var completed bool
 	if getURL.Has("completed") {
 		value, err := strconv.ParseBool(getURL.Get("completed"))
 		if err != nil {
@@ -143,14 +147,18 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 			})
 			return
 		}
+		var completed bool
 		if value == true {
 			completed = true
 		}
 		if value == false {
 			completed = false
 		}
+		todoFilter = TodoFilter{
+			Completed: &completed,
+		}
 	}
-	getAllTodos, err := s.todoService.TodosList(userID, page, limit, completed)
+	getAllTodos, err := s.todoService.TodosList(userID, page, limit, todoFilter)
 	if err != nil {
 		response.HandleServiceError(w, err)
 		return

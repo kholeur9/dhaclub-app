@@ -95,7 +95,7 @@ func (ts *TodoService) GetTodoByID(userID uuid.UUID, todoID string) (*Todo, erro
 	return todo, nil
 }
 
-func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, completed bool) ([]*Todo, error) {
+func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, todoFilter TodoFilter) ([]*Todo, error) {
 	if page < 1 {
 		return nil, &apperrors.ServiceError{
 			Type: apperrors.VALIDATION,
@@ -112,7 +112,7 @@ func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, complete
 		limit = 20
 	}
 	offset := (page - 1) * limit
-	getAllTodos, err := ts.store.TodosList(userID, limit, offset, completed)
+	getAllTodos, err := ts.store.TodosList(userID, limit, offset, todoFilter)
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,
