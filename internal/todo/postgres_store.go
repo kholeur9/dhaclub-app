@@ -47,7 +47,7 @@ func (pt *PostgresTodo) TodosList(userID uuid.UUID, limit int, offset int, todoF
 	if todoFilter.Completed == nil {
 		rows, err = pt.db.Query(`SELECT id, user_id, description, completed, created_at, updated_at FROM todos WHERE user_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3`, userID, limit, offset)
 	} else {
-		rows, err = pt.db.Query(`SELECT id, user_id, description, completed, created_at, updated_at FROM todos WHERE user_id = $1 AND completed = $4 ORDER BY created_at DESC LIMIT $2 OFFSET $3`, userID, limit, offset, todoFilter.Completed)
+		rows, err = pt.db.Query(`SELECT id, user_id, description, completed, created_at, updated_at FROM todos WHERE user_id = $1 AND completed = $4 ORDER BY created_at DESC LIMIT $2 OFFSET $3`, userID, limit, offset, *todoFilter.Completed)
 	}
 	if err != nil {
 		return nil, err
