@@ -115,6 +115,9 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 	if getPage == "" {
 		getURL.Set("page", "1")
 	}
+	if getLimit == "" {
+		getURL.Set("limit", "20")
+	}
 	page, err := strconv.Atoi(getURL.Get("page"))
 	if err != nil {
 		response.HandleServiceError(w, &apperrors.ServiceError{
@@ -122,9 +125,6 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 			Message: "Coversion impossible",
 		})
 		return
-	}
-	if getLimit == "" {
-		getURL.Set("limit", "20")
 	}
 	limit, err := strconv.Atoi(getURL.Get("limit"))
 	if err != nil {
