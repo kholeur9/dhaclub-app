@@ -18,7 +18,7 @@ type Todo struct {
 type TodoStore interface {
 	Add(t Todo) (*Todo, error)
 	ExistsByDescription(desc string) (bool, error)
-	TodosList(userID uuid.UUID, limit int, offset int) ([]*Todo, error)
+	TodosList(userID uuid.UUID, limit int, offset int, completed bool) ([]*Todo, error)
 	GetUserTodoByID(userID, todoID uuid.UUID) (*Todo, error)
 	DeleteUserTodo(userID uuid.UUID, todoID uuid.UUID) error
 	UpdateTodo(userID uuid.UUID, t UpdateFieldDto) (*Todo, error)

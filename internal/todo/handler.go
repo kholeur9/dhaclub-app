@@ -132,7 +132,25 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
-	getAllTodos, err := s.todoService.TodosList(userID, page, limit)
+	// Filtered by completed or not completed
+	var completed bool
+	if getURL.Has("completed") {
+		value, err := strconv.ParseBool(getURL.Get("completed"))
+		if err != nil {
+			response.HandleServiceError(w, &apperrors.ServiceError{
+				Type:    apperrors.VALIDATION,
+				Message: "Invalid completed value.",
+			})
+			return
+		}
+		if value == true {
+			completed = true
+		}
+		if value == false {
+			completed = false
+		}
+	}
+	getAllTodos, err := s.todoService.TodosList(userID, page, limit, completed)
 	if err != nil {
 		response.HandleServiceError(w, err)
 		return
