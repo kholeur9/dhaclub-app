@@ -147,15 +147,8 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 			})
 			return
 		}
-		var completed bool
-		if value == true {
-			completed = true
-		}
-		if value == false {
-			completed = false
-		}
 		todoFilter = TodoFilter{
-			Completed: &completed,
+			Completed: &value,
 		}
 	}
 	getAllTodos, err := s.todoService.TodosList(userID, page, limit, todoFilter)
