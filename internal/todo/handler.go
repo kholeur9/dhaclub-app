@@ -132,7 +132,7 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
-	getAllTodos, err := s.todoService.TodosList(page, limit, userID)
+	getAllTodos, err := s.todoService.TodosList(userID, page, limit)
 	if err != nil {
 		response.HandleServiceError(w, err)
 		return

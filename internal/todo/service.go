@@ -1,7 +1,7 @@
 package todo
 
 import (
-	"fmt"
+	//"fmt"
 	"errors"
 	"strings"
 	"time"
@@ -95,9 +95,24 @@ func (ts *TodoService) GetTodoByID(userID uuid.UUID, todoID string) (*Todo, erro
 	return todo, nil
 }
 
-func (ts *TodoService) TodosList(page int, limit int, userID uuid.UUID) ([]*Todo, error) {
-	fmt.Println("Service:", page, limit)
-	getAllTodos, err := ts.store.TodosList(userID)
+func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int) ([]*Todo, error) {
+	if page < 1 {
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.VALIDATION,
+			Message: "Inavlid value page.",
+		}
+	}
+	if limit < 1 {
+		return nil, &apperrors.ServiceError{
+			Type: apperrors.VALIDATION,
+			Message: "Invalid value limit.",
+		}
+	}
+	if limit > 20 {
+		limit = 20
+	}
+	offset := (page - 1) * limit
+	getAllTodos, err := ts.store.TodosList(userID, limit, offset)
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,

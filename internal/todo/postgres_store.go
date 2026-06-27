@@ -41,8 +41,8 @@ func (pt *PostgresTodo) ExistsByDescription(description string) (bool, error) {
 	return false, err
 }
 
-func (pt *PostgresTodo) TodosList(userID uuid.UUID) ([]*Todo, error) {
-	rows, err := pt.db.Query(`SELECT id, user_id, description, completed, created_at, updated_at FROM todos WHERE user_id = $1 ORDER BY created_at DESC`, userID)
+func (pt *PostgresTodo) TodosList(userID uuid.UUID, limit int, offset int) ([]*Todo, error) {
+	rows, err := pt.db.Query(`SELECT id, user_id, description, completed, created_at, updated_at FROM todos WHERE user_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3`, userID, limit, offset)
 	if err != nil {
 		return nil, err
 	}
