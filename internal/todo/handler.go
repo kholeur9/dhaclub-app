@@ -110,19 +110,17 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 	if !getURL.Has("limit") {
 		getURL.Add("limit", "20")
 	}
-	getPage := getURL.Get("page")
-	getLimit := getURL.Get("limit")
-	if getPage == "" {
+	if getURL.Get("page") == "" {
 		getURL.Set("page", "1")
 	}
-	if getLimit == "" {
+	if getURL.Get("limit") == "" {
 		getURL.Set("limit", "20")
 	}
 	page, err := strconv.Atoi(getURL.Get("page"))
 	if err != nil {
 		response.HandleServiceError(w, &apperrors.ServiceError{
 			Type:    apperrors.VALIDATION,
-			Message: "Coversion impossible",
+			Message: "Invalid page number.",
 		})
 		return
 	}
@@ -130,7 +128,7 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		response.HandleServiceError(w, &apperrors.ServiceError{
 			Type:    apperrors.VALIDATION,
-			Message: "Coversion impossible",
+			Message: "Invalid limit value.",
 		})
 		return
 	}
