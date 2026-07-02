@@ -95,7 +95,8 @@ func (ts *TodoService) GetTodoByID(userID uuid.UUID, todoID string) (*Todo, erro
 	return todo, nil
 }
 
-func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, todoFilter TodoFilter) ([]*Todo, error) {
+func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, todoFilter TodoFilter, todoTri TodoTri) ([]*Todo, error) {
+	// Pagination Logic
 	if page < 1 {
 		return nil, &apperrors.ServiceError{
 			Type: apperrors.VALIDATION,
@@ -112,7 +113,14 @@ func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, todoFilt
 		limit = 20
 	}
 	offset := (page - 1) * limit
-	getAllTodos, err := ts.store.TodosList(userID, limit, offset, todoFilter)
+	// tri logic
+	if todoTri.Sort != nil {
+		triSort := *todoTri.Sort
+		if triSort != "created_at" {
+			
+		}
+	}
+	getAllTodos, err := ts.store.TodosList(userID, limit, offset, todoFilter, todoTri)
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,

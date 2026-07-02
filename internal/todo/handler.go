@@ -1,7 +1,7 @@
 package todo
 
 import (
-	//"fmt"
+	"fmt"
 	"strconv"
 	//"strings"
 
@@ -90,6 +90,11 @@ type TodoFilter struct {
 	Completed *bool
 }
 
+type TodoTri struct {
+	Sort *string
+	Order *string
+}
+
 func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 	var todoFilter TodoFilter
 	userIDContext := r.Context().Value(shared.UserIDKey)
@@ -108,6 +113,7 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+	// Pagination
 	getURL := r.URL.Query()
 	if !getURL.Has("page") {
 		getURL.Add("page", "1")
@@ -151,7 +157,18 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 			Completed: &value,
 		}
 	}
-	getAllTodos, err := s.todoService.TodosList(userID, page, limit, todoFilter)
+	// Tried by sort : Created at, updated at And Order : DESC, ASC
+	var todoTri TodoTri
+	if getURL.Has("sort") && getURL.Has("order") {
+		fmt.Println("okay ! there is.")
+		valueSort := getURL.Get("sort")
+		valueOrder := getURL.Get("order")
+		todoTri = TodoTri{
+			Sort: &valueSort,
+			Order: &valueOrder,
+		}
+	}
+	getAllTodos, err := s.todoService.TodosList(userID, page, limit, todoFilter, todoTri)
 	if err != nil {
 		response.HandleServiceError(w, err)
 		return
