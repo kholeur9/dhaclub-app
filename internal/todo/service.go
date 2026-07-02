@@ -95,17 +95,17 @@ func (ts *TodoService) GetTodoByID(userID uuid.UUID, todoID string) (*Todo, erro
 	return todo, nil
 }
 
-func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, todoFilter TodoFilter, todoTri TodoTri) ([]*Todo, error) {
+func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, todoFilter TodoFilter, todoSort TodoSort) ([]*Todo, error) {
 	// Pagination Logic
 	if page < 1 {
 		return nil, &apperrors.ServiceError{
-			Type: apperrors.VALIDATION,
+			Type:    apperrors.VALIDATION,
 			Message: "Inavlid value page.",
 		}
 	}
 	if limit < 1 {
 		return nil, &apperrors.ServiceError{
-			Type: apperrors.VALIDATION,
+			Type:    apperrors.VALIDATION,
 			Message: "Invalid value limit.",
 		}
 	}
@@ -114,13 +114,37 @@ func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, todoFilt
 	}
 	offset := (page - 1) * limit
 	// tri logic
-	if todoTri.Sort != nil {
-		triSort := *todoTri.Sort
-		if triSort != "created_at" {
-			
+	if todoSort.Sort == nil {
+		return nil, &apperrors.ServiceError{
+			Type:    apperrors.VALIDATION,
+			Message: "Missing value sort.",
 		}
 	}
-	getAllTodos, err := ts.store.TodosList(userID, limit, offset, todoFilter, todoTri)
+	if todoSort.Order == nil {
+		return nil, &apperrors.ServiceError{
+			Type:    apperrors.VALIDATION,
+			Message: "Missing value order.",
+		}
+	}
+	if todoSort.Sort != nil {
+		sort := *todoSort.Sort
+		if sort != "created_at" && sort != "updated_at" {
+			return nil, &apperrors.ServiceError{
+				Type:    apperrors.VALIDATION,
+				Message: "Invalid value sort.",
+			}
+		}
+	}
+	if todoSort.Order != nil {
+		order := *todoSort.Order
+		if order != "desc" && order != "asc" {
+			return nil, &apperrors.ServiceError{
+				Type:    apperrors.VALIDATION,
+				Message: "Invalid value order.",
+			}
+		}
+	}
+	getAllTodos, err := ts.store.TodosList(userID, limit, offset, todoFilter, todoSort)
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,

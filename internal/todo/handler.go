@@ -1,7 +1,7 @@
 package todo
 
 import (
-	"fmt"
+	//"fmt"
 	"strconv"
 	//"strings"
 
@@ -90,7 +90,7 @@ type TodoFilter struct {
 	Completed *bool
 }
 
-type TodoTri struct {
+type TodoSort struct {
 	Sort *string
 	Order *string
 }
@@ -158,17 +158,16 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	// Tried by sort : Created at, updated at And Order : DESC, ASC
-	var todoTri TodoTri
-	if getURL.Has("sort") && getURL.Has("order") {
-		fmt.Println("okay ! there is.")
+	var todoSort TodoSort
+	if getURL.Has("sort") || getURL.Has("order") {
 		valueSort := getURL.Get("sort")
 		valueOrder := getURL.Get("order")
-		todoTri = TodoTri{
+		todoSort = TodoSort{
 			Sort: &valueSort,
 			Order: &valueOrder,
 		}
 	}
-	getAllTodos, err := s.todoService.TodosList(userID, page, limit, todoFilter, todoTri)
+	getAllTodos, err := s.todoService.TodosList(userID, page, limit, todoFilter, todoSort)
 	if err != nil {
 		response.HandleServiceError(w, err)
 		return

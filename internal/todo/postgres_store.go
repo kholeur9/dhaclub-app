@@ -41,7 +41,7 @@ func (pt *PostgresTodo) ExistsByDescription(description string) (bool, error) {
 	return false, err
 }
 
-func (pt *PostgresTodo) TodosList(userID uuid.UUID, limit int, offset int, todoFilter TodoFilter, todoTri TodoTri) ([]*Todo, error) {
+func (pt *PostgresTodo) TodosList(userID uuid.UUID, limit int, offset int, todoFilter TodoFilter, todoSort TodoSort) ([]*Todo, error) {
 	var rows *sql.Rows
 	var err error
 	if todoFilter.Completed == nil {
