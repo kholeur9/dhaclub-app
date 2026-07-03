@@ -161,15 +161,11 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 	var todoSort TodoSort
 	if getURL.Has("sort") {
 		valueSort := getURL.Get("sort")
-		todoSort = TodoSort{
-			Sort: &valueSort,
-		}
+		todoSort.Sort = &valueSort
 	}
 	if getURL.Has("order") {
 		valueOrder := getURL.Get("order")
-		todoSort = TodoSort{
-			Order: &valueOrder,
-		}
+		todoSort.Order = &valueOrder
 	}
 	getAllTodos, err := s.todoService.TodosList(userID, page, limit, todoFilter, todoSort)
 	if err != nil {
