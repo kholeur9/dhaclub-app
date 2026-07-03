@@ -115,19 +115,12 @@ func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, todoFilt
 	offset := (page - 1) * limit
 	// tri logic
 	if todoSort.Sort != nil && todoSort.Order == nil || todoSort.Sort == nil && todoSort.Order != nil {
-		if todoSort.Order == nil {
-			return nil, &apperrors.ServiceError{
-				Type:    apperrors.VALIDATION,
-				Message: "Missing value order.",
-			}
-		} else if todoSort.Sort == nil {
-			return nil, &apperrors.ServiceError{
-				Type:    apperrors.VALIDATION,
-				Message: "Missing value sort.",
-			}
+		return nil, &apperrors.ServiceError{
+			Type:    apperrors.VALIDATION,
+			Message: "Sort and order are necessary..",
 		}
 	}
-	if todoSort.Sort != nil {
+	if todoSort.Sort != nil && todoSort.Order != nil {
 		sort := *todoSort.Sort
 		if sort != "created_at" && sort != "updated_at" {
 			return nil, &apperrors.ServiceError{
@@ -135,8 +128,6 @@ func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, todoFilt
 				Message: "Invalid value sort.",
 			}
 		}
-	}
-	if todoSort.Order != nil {
 		order := *todoSort.Order
 		if order != "desc" && order != "asc" {
 			return nil, &apperrors.ServiceError{
