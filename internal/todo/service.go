@@ -114,16 +114,17 @@ func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, todoFilt
 	}
 	offset := (page - 1) * limit
 	// tri logic
-	if todoSort.Sort == nil {
-		return nil, &apperrors.ServiceError{
-			Type:    apperrors.VALIDATION,
-			Message: "Missing value sort.",
-		}
-	}
-	if todoSort.Order == nil {
-		return nil, &apperrors.ServiceError{
-			Type:    apperrors.VALIDATION,
-			Message: "Missing value order.",
+	if todoSort.Sort != nil && todoSort.Order == nil || todoSort.Sort == nil && todoSort.Order != nil {
+		if todoSort.Order == nil {
+			return nil, &apperrors.ServiceError{
+				Type:    apperrors.VALIDATION,
+				Message: "Missing value order.",
+			}
+		} else if todoSort.Sort == nil {
+			return nil, &apperrors.ServiceError{
+				Type:    apperrors.VALIDATION,
+				Message: "Missing value sort.",
+			}
 		}
 	}
 	if todoSort.Sort != nil {
