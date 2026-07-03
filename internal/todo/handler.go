@@ -96,7 +96,6 @@ type TodoSort struct {
 }
 
 func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
-	var todoFilter TodoFilter
 	userIDContext := r.Context().Value(shared.UserIDKey)
 	if userIDContext == nil {
 		response.HandleServiceError(w, &apperrors.ServiceError{
@@ -144,6 +143,7 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Filtered by completed or not completed
+	var todoFilter TodoFilter
 	if getURL.Has("completed") {
 		value, err := strconv.ParseBool(getURL.Get("completed"))
 		if err != nil {
@@ -159,11 +159,15 @@ func (s *HandlerTodo) TodosListHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	// Tried by sort : Created at, updated at And Order : DESC, ASC
 	var todoSort TodoSort
-	if getURL.Has("sort") || getURL.Has("order") {
+	if getURL.Has("sort") {
 		valueSort := getURL.Get("sort")
-		valueOrder := getURL.Get("order")
 		todoSort = TodoSort{
 			Sort: &valueSort,
+		}
+	}
+	if getURL.Has("order") {
+		valueOrder := getURL.Get("order")
+		todoSort = TodoSort{
 			Order: &valueOrder,
 		}
 	}
