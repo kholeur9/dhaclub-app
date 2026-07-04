@@ -42,13 +42,15 @@ func (pt *PostgresTodo) ExistsByDescription(description string) (bool, error) {
 }
 
 func (pt *PostgresTodo) TodosList(userID uuid.UUID, limit int, offset int, todoFilter TodoFilter, todoSort TodoSort) ([]*Todo, error) {
-	var rows *sql.Rows
-	var err error
-	if todoFilter.Completed == nil {
-		rows, err = pt.db.Query(`SELECT id, user_id, description, completed, created_at, updated_at FROM todos WHERE user_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3`, userID, limit, offset)
-	} else {
-		rows, err = pt.db.Query(`SELECT id, user_id, description, completed, created_at, updated_at FROM todos WHERE user_id = $1 AND completed = $4 ORDER BY created_at DESC LIMIT $2 OFFSET $3`, userID, limit, offset, *todoFilter.Completed)
+	baseSQL := `SELECT id, user_id, description, completed, created_at, updated_at FROM todos WHERE user_id = $1`
+	if todoFilter.Completed != nil {
+		baseSQL += ` AND completed = $2`
 	}
+	if todoSort.Sort != nil && todoSort.Order != nil {
+		baseSQL += ` ORDER BY $3 $4`
+	}
+	baseSQL += ` LIMIT $5 OFFSET $6`
+	rows, err := pt.db.Query(baseSQL, userID, *todoFilter.Completed, todoSort.Sort, todoSort.Order, limit, offset)
 	if err != nil {
 		return nil, err
 	}

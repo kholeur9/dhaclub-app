@@ -137,8 +137,8 @@ func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, todoFilt
 		}
 	}
 	if todoSort.Order != nil {
-		order := *todoSort.Order
-		if order != "desc" && order != "asc" {
+		order := strings.ToUpper(*todoSort.Order)
+		if order != "DESC" && order != "ASC" {
 			return nil, &apperrors.ServiceError{
 				Type:    apperrors.VALIDATION,
 				Message: "Invalid value order.",
