@@ -2,9 +2,9 @@ package todo
 
 import (
 	"database/sql"
-	"strconv"
-	"fmt"
 	"errors"
+	"fmt"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/kholeur9/dhaclub-app/internal/apperrors"
@@ -52,6 +52,8 @@ func (pt *PostgresTodo) TodosList(userID uuid.UUID, limit int, offset int, todoF
 		args = append(args, completed)
 		idx++
 		baseSQL += " AND completed = $" + strconv.Itoa(idx)
+		fmt.Println(baseSQL)
+		fmt.Println(args)
 	}
 	if todoSort.SortColumn != "" && todoSort.SortOrder != "" {
 		baseSQL += " ORDER BY " + todoSort.SortColumn + " " + todoSort.SortOrder
@@ -59,9 +61,13 @@ func (pt *PostgresTodo) TodosList(userID uuid.UUID, limit int, offset int, todoF
 	args = append(args, limit)
 	idx += 1
 	baseSQL += " LIMIT $" + strconv.Itoa(idx)
+	fmt.Println(baseSQL)
+	fmt.Println(args)
 	args = append(args, offset)
 	idx += 1
 	baseSQL += " OFFSET $" + strconv.Itoa(idx)
+	fmt.Println(baseSQL)
+	fmt.Println(args)
 	rows, err := pt.db.Query(baseSQL, args...)
 	if err != nil {
 		return nil, err
