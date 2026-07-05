@@ -2,6 +2,7 @@ package todo
 
 import (
 	"database/sql"
+	"strconv"
 	//"fmt"
 	"errors"
 
@@ -42,16 +43,26 @@ func (pt *PostgresTodo) ExistsByDescription(description string) (bool, error) {
 }
 
 func (pt *PostgresTodo) TodosList(userID uuid.UUID, limit int, offset int, todoFilter TodoFilter, todoSort TodoSort) ([]*Todo, error) {
-	
+	var args []any
+	var idx int = 1
 	baseSQL := "SELECT id, user_id, description, completed, created_at, updated_at FROM todos WHERE user_id = $1"
+	args = append(args, userID)
 	if todoFilter.Completed != nil {
-		baseSQL += ` AND completed = $2`
+		completed := *todoFilter.Completed
+		args = append(args, completed)
+		idx++
+		baseSQL += " AND completed = $" + strconv.Itoa(idx)
 	}
 	if todoSort.Sort != nil && todoSort.Order != nil {
 		baseSQL += " ORDER BY " + *todoSort.Sort + " " + *todoSort.Order
 	}
-	baseSQL += " LIMIT $3 OFFSET $4"
-	rows, err := pt.db.Query(baseSQL, userID, *todoFilter.Completed, todoSort.Sort, todoSort.Order, limit, offset)
+	args = append(args, limit)
+	idx += 1
+	baseSQL += " LIMIT $" + strconv.Itoa(idx)
+	args = append(args, offset)
+	idx += 1
+	baseSQL += " OFFSET $" + strconv.Itoa(idx)
+	rows, err := pt.db.Query(baseSQL, args...)
 	if err != nil {
 		return nil, err
 	}

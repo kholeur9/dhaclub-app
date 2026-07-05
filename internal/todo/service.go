@@ -112,10 +112,11 @@ func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, todoFilt
 	if limit > 20 {
 		limit = 20
 	}
+	// Calcul offset by page
 	offset := (page - 1) * limit
 	// tri logic
 	sortColumn := "created_at"
-	sortOrder := "DESC"	
+	sortOrder := "DESC"
 	if (todoSort.Sort != nil && todoSort.Order == nil) || (todoSort.Sort == nil && todoSort.Order != nil) {
 		if todoSort.Order == nil {
 			return nil, &apperrors.ServiceError{
@@ -130,14 +131,14 @@ func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, todoFilt
 		}
 	}
 	if todoSort.Sort != nil {
-		sort := *todoSort.Sort
-		if sort == "created_at" {
+		switch *todoSort.Sort {
+		case "created_at":
 			sortColumn = "created_at"
 			todoSort.Sort = &sortColumn
-		} else if  sort == "updated_at" {
+		case "updated_at":
 			sortColumn = "updated_at"
-		}
-		if sort != "created_at" && sort != "updated_at" {
+			todoSort.Sort = &sortColumn
+		default:
 			return nil, &apperrors.ServiceError{
 				Type:    apperrors.VALIDATION,
 				Message: "Invalid value sort.",
@@ -145,15 +146,14 @@ func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, todoFilt
 		}
 	}
 	if todoSort.Order != nil {
-		order := *todoSort.Order
-		if order == "desc" {
+		switch *todoSort.Order {
+		case "desc":
 			sortOrder = "DESC"
 			todoSort.Order = &sortOrder
-		} else if order == "asc" {
-			sortOrder = "ASC"
+		case "asc":
+			sortOrder = "asc"
 			todoSort.Order = &sortOrder
-		}
-		if order != "desc" && order != "asc" {
+		default:
 			return nil, &apperrors.ServiceError{
 				Type:    apperrors.VALIDATION,
 				Message: "Invalid value order.",
@@ -161,6 +161,7 @@ func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, todoFilt
 		}
 	}
 	getAllTodos, err := ts.store.TodosList(userID, limit, offset, todoFilter, todoSort)
+	
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,
