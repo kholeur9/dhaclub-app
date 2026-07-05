@@ -96,8 +96,8 @@ func (ts *TodoService) GetTodoByID(userID uuid.UUID, todoID string) (*Todo, erro
 }
 
 type TodoSortService struct {
-	SortColumn *string
-	SortOrder *string
+	SortColumn string
+	SortOrder string
 }
 func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, todoFilter TodoFilter, todoSort TodoSort) ([]*Todo, error) {
 	// Pagination Logic
@@ -136,11 +136,9 @@ func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, todoFilt
 	if todoSort.Sort != nil {
 		switch *todoSort.Sort {
 		case "created_at":
-			createdAt := "created_at"
-			todoSortService.SortColumn = &createdAt
+			todoSortService.SortColumn = "created_at"
 		case "updated_at":
-			updatedAt := "updated_at"
-			todoSortService.SortColumn = &updatedAt
+			todoSortService.SortColumn = "updated_at"
 		default:
 			return nil, &apperrors.ServiceError{
 				Type:    apperrors.VALIDATION,
@@ -151,11 +149,9 @@ func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, todoFilt
 	if todoSort.Order != nil {
 		switch *todoSort.Order {
 		case "desc":
-			desc := "DESC"
-			todoSortService.SortOrder = &desc
+			todoSortService.SortOrder = "DESC"
 		case "asc":
-			asc := "ASC"
-			todoSortService.SortOrder = &asc
+			todoSortService.SortOrder = "ASC"
 		default:
 			return nil, &apperrors.ServiceError{
 				Type:    apperrors.VALIDATION,
