@@ -95,6 +95,10 @@ func (ts *TodoService) GetTodoByID(userID uuid.UUID, todoID string) (*Todo, erro
 	return todo, nil
 }
 
+type TodoSortService struct {
+	SortColumn *string
+	SortOrder *string
+}
 func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, todoFilter TodoFilter, todoSort TodoSort) ([]*Todo, error) {
 	// Pagination Logic
 	if page < 1 {
@@ -115,8 +119,6 @@ func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, todoFilt
 	// Calcul offset by page
 	offset := (page - 1) * limit
 	// tri logic
-	sortColumn := "created_at"
-	sortOrder := "DESC"
 	if (todoSort.Sort != nil && todoSort.Order == nil) || (todoSort.Sort == nil && todoSort.Order != nil) {
 		if todoSort.Order == nil {
 			return nil, &apperrors.ServiceError{
@@ -130,14 +132,15 @@ func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, todoFilt
 			}
 		}
 	}
+	var todoSortService TodoSortService
 	if todoSort.Sort != nil {
 		switch *todoSort.Sort {
 		case "created_at":
-			sortColumn = "created_at"
-			todoSort.Sort = &sortColumn
+			createdAt := "created_at"
+			todoSortService.SortColumn = &createdAt
 		case "updated_at":
-			sortColumn = "updated_at"
-			todoSort.Sort = &sortColumn
+			updatedAt := "updated_at"
+			todoSortService.SortColumn = &updatedAt
 		default:
 			return nil, &apperrors.ServiceError{
 				Type:    apperrors.VALIDATION,
@@ -148,11 +151,11 @@ func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, todoFilt
 	if todoSort.Order != nil {
 		switch *todoSort.Order {
 		case "desc":
-			sortOrder = "DESC"
-			todoSort.Order = &sortOrder
+			desc := "DESC"
+			todoSortService.SortOrder = &desc
 		case "asc":
-			sortOrder = "asc"
-			todoSort.Order = &sortOrder
+			asc := "ASC"
+			todoSortService.SortOrder = &asc
 		default:
 			return nil, &apperrors.ServiceError{
 				Type:    apperrors.VALIDATION,
@@ -160,8 +163,8 @@ func (ts *TodoService) TodosList(userID uuid.UUID, page int, limit int, todoFilt
 			}
 		}
 	}
-	getAllTodos, err := ts.store.TodosList(userID, limit, offset, todoFilter, todoSort)
-	
+	getAllTodos, err := ts.store.TodosList(userID, limit, offset, todoFilter, todoSortService)
+
 	if err != nil {
 		return nil, &apperrors.ServiceError{
 			Type:    apperrors.INTERNAL,

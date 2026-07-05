@@ -42,7 +42,7 @@ func (pt *PostgresTodo) ExistsByDescription(description string) (bool, error) {
 	return false, err
 }
 
-func (pt *PostgresTodo) TodosList(userID uuid.UUID, limit int, offset int, todoFilter TodoFilter, todoSort TodoSort) ([]*Todo, error) {
+func (pt *PostgresTodo) TodosList(userID uuid.UUID, limit int, offset int, todoFilter TodoFilter, todoSort TodoSortService) ([]*Todo, error) {
 	var args []any
 	var idx int = 1
 	baseSQL := "SELECT id, user_id, description, completed, created_at, updated_at FROM todos WHERE user_id = $1"
@@ -53,8 +53,8 @@ func (pt *PostgresTodo) TodosList(userID uuid.UUID, limit int, offset int, todoF
 		idx++
 		baseSQL += " AND completed = $" + strconv.Itoa(idx)
 	}
-	if todoSort.Sort != nil && todoSort.Order != nil {
-		baseSQL += " ORDER BY " + *todoSort.Sort + " " + *todoSort.Order
+	if todoSort.SortColumn != nil && todoSort.SortOrder != nil {
+		baseSQL += " ORDER BY " + *todoSort.SortColumn + " " + *todoSort.SortOrder
 	}
 	args = append(args, limit)
 	idx += 1
