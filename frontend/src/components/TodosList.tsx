@@ -4,7 +4,11 @@ type TodoType = {
     completed: boolean,
 }
 
-export function TodosList({list}:{list: TodoType[]}) {
+type TodosListProps = {
+    list: TodoType[]
+}
+
+export function TodosList({list}: TodosListProps) {
     return(
         <>
             <h1>Mes TODOS</h1>
