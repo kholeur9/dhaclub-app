@@ -13,7 +13,7 @@ function Dashboard() {
     description: "MY FIRST TODO",
     completed: false,
   }
-  const todos = [todo1];
+  const todos: Todo[] = [todo1];
   return (
     <>
       <h1>Dashboard MIRANDE</h1>
