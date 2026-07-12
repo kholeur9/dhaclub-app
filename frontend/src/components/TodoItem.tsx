@@ -6,7 +6,7 @@ function TodoItem({ todo }: { todo: Todo }) {
     <>
       <div className="desc" onClick={() => alert(id)}>
         <p className="desc-p">
-          {completed ? <span>✅</span> : <span>▢</span>}
+          {completed ? <span className="desc-c">✅</span> : <span className="desc-c">▢</span>}
           {description}
         </p>
       </div>

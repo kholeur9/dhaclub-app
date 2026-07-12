@@ -12,7 +12,7 @@ function Dashboard() {
   const todo2: Todo = {
     id: "2",
     description: "LEARN REACT",
-    completed: false,
+    completed: true,
     createdAt: new Date(),
   }
   const todos: Todo[] = [todo1, todo2];
