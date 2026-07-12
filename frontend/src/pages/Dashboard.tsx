@@ -7,8 +7,15 @@ function Dashboard() {
     id: "1",
     description: "MY FIRST TODO",
     completed: false,
+    createdAt: new Date(),
   }
-  const todos: Todo[] = [todo1];
+  const todo2: Todo = {
+    id: "2",
+    description: "LEARN REACT",
+    completed: false,
+    createdAt: new Date(),
+  }
+  const todos: Todo[] = [todo1, todo2];
   return (
     <>
       <h1>Dashboard MIRANDE</h1>

@@ -10,7 +10,7 @@ export function TodosList({list}: TodosListProps) {
         <>
             <h1>Mes TODOS</h1>
             {list.map(todo => {
-                <TodoItem key={todo.id} todo={todo} />
+                return <TodoItem key={todo.id} todo={todo} />
             })}
         </>
     )
