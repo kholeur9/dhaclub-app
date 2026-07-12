@@ -1,11 +1,6 @@
 //import { useState } from "react";
 import {TodosList} from "../components/TodosList";
-
-type Todo = {
-  id: string
-  description: string
-  completed: boolean
-}
+import type { Todo } from "../types/todo";
 
 function Dashboard() {
   const todo1: Todo = {
