@@ -1,14 +1,17 @@
-import type { Todo } from "../types/todo"
+import type { Todo } from "../types/todo";
 
-
-function TodoItem({todo}:{todo: Todo}) {
-    return(
-        <>
-            <div>
-                <p className="desc">{todo.description}</p>
-            </div>
-        </>
-    )
+function TodoItem({ todo }: { todo: Todo }) {
+  const { id, description, completed } = todo;
+  return (
+    <>
+      <div className="desc" onClick={() => alert(id)}>
+        <p className="desc-p">
+          {completed ? <span>✅</span> : <span>▢</span>}
+          {description}
+        </p>
+      </div>
+    </>
+  );
 }
 
-export default TodoItem
+export default TodoItem;
