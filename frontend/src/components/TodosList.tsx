@@ -1,5 +1,5 @@
-import type { Todo } from "../types/todo"
-import TodoItem from "./TodoItem"
+import type { Todo } from "@/types/todo"
+import {TodoItem} from "@/components/TodoItem"
 
 type TodosListProps = {
     list: Todo[]

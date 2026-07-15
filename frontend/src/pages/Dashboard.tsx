@@ -1,6 +1,7 @@
 import { useState } from "react";
-import {TodosList} from "../components/TodosList";
-import type { Todo } from "../types/todo";
+import {TodosList} from "@/components/TodosList";
+import type { Todo } from "@/types/todo";
+import { Button } from "@/components/ui/button";
 
 function Dashboard() {
   const [todos, setTodos] = useState<Todo[]>([
@@ -26,7 +27,7 @@ function Dashboard() {
   return (
     <>
       <h1>Dashboard MIRANDE</h1>
-      <button onClick={addTodo}>+ add a todo</button>
+      <Button onClick={addTodo}>+ add a todo</Button>
       <TodosList list={todos} />
     </>
   );
