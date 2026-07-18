@@ -25,11 +25,11 @@ function Dashboard() {
   }
   
   return (
-    <>
+    <div>
       <h1>Dashboard MIRANDE</h1>
       <Button onClick={addTodo}>+ add a todo</Button>
       <TodosList list={todos} />
-    </>
+    </div>
   );
 }
 

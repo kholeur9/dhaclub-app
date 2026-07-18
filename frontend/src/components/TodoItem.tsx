@@ -1,15 +1,22 @@
 import type { Todo } from "@/types/todo";
+import { Item, ItemContent, ItemDescription, ItemMedia } from "./ui/item";
 
 export function TodoItem({ todo }: { todo: Todo }) {
   const { id, description, completed } = todo;
   return (
     <>
-      <div className="desc" onClick={() => alert(id)}>
-        <p className="desc-p">
-          {completed ? <span className="">✅</span> : <span className="">▢</span>}
-          {description}
-        </p>
-      </div>
+      <Item variant="outline" className="w-md" onClick={() => alert(id)}>
+        <ItemMedia>
+          {completed ? (
+            <span className="">✅</span>
+          ) : (
+            <span className="">▢</span>
+          )}
+        </ItemMedia>
+        <ItemContent>
+          <ItemDescription>{description}</ItemDescription>
+        </ItemContent>
+      </Item>
     </>
   );
 }
